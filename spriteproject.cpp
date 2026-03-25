@@ -26,6 +26,8 @@ void SpriteProject::setPixel(int x, int y, Pixel p){
 }
 
 void SpriteProject::resize(int width, int height){
+    this->width = width;
+    this->height = height;
     for(auto& frame : frames){
         frame.resize(width, height);
     }
