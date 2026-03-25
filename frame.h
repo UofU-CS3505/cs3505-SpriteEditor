@@ -19,6 +19,7 @@ public:
     Pixel getPixel(int x, int y);
     void clear();
     void replaceColor(Pixel oldColor, Pixel newColor);
+    void resize(int width, int height);
 };
 
 #endif // FRAME_H

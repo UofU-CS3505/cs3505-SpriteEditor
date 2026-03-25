@@ -22,25 +22,32 @@ Frame& SpriteProject::getCurrentFrame(){
 }
 
 void SpriteProject::setPixel(int x, int y, Pixel p){
-
+    frames[currentFrameIndex].setPixel(x, y, p);
 }
+
 void SpriteProject::resize(int width, int height){
-
+    for(auto& frame : frames){
+        frame.resize(width, height);
+    }
 }
+
 void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
-
+    for(auto& frame : frames){
+        frame.replaceColor(oldColor, newColor);
+    }
 }
-void SpriteProject::save(string filename){
 
+void SpriteProject::save(string filename){
+    //TODO
 }
 void SpriteProject::load(string filename){
-
+    //TODO
 }
 
 void SpriteProject::undo(){
-
+    //TODO
 }
 
 void SpriteProject::redo(){
-
+    //TODO
 }

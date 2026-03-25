@@ -18,6 +18,7 @@ private:
     Pixel currentColor;
     stack<Frame> undoStack;
     stack<Frame> redoStack;
+
 public:
     SpriteProject();
     void addFrame();

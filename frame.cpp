@@ -27,3 +27,10 @@ void Frame::replaceColor(Pixel oldColor, Pixel newColor){
         }
     }
 }
+
+void Frame::resize(int width, int height){
+    pixels.resize(width);
+    for(auto& row : pixels){
+        row.resize(height);
+    }
+}
