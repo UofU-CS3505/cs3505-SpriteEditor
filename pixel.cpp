@@ -30,7 +30,6 @@ int Pixel::getA(){
     return alpha;
 }
 
-
 void Pixel::setRGBA(int r, int g, int b, int a){
     red = r;
     green = g;
@@ -43,5 +42,5 @@ void Pixel::setAlpha(int a){
 }
 
 bool Pixel::equals(Pixel other){
-    return (other.red == red && other.blue == blue && other.green == green && other.alpha == alpha);
+    return (other.red == red && other.blue == blue && other.green == green);
 }

@@ -3,16 +3,27 @@
 Frame::Frame() {}
 
 void Frame::setPixel(int x, int y, Pixel p){
-    //TODO
+    pixels[x][y].setRGBA(p.getR(), p.getG(), p.getB(), p.getA());
 }
 
 Pixel Frame::getPixel(int x, int y){
-    //TODO
-    return Pixel();
+    return pixels[x][y];
 }
+
 void Frame::clear(){
-    //TODO
+    for(auto& row : pixels){
+        for(auto& pixel : row){
+            pixel.setRGBA(0,0,0,0);
+        }
+    }
 }
-void replaceColor(Pixel oldColor, Pixel newColor){
-    //TODO
+
+void Frame::replaceColor(Pixel oldColor, Pixel newColor){
+    for(auto& row : pixels){
+        for(auto& pixel : row){
+            if(pixel.equals(oldColor)){
+                pixel.setRGBA(newColor.getR(), newColor.getG(), newColor.getB(), pixel.getA());
+            }
+        }
+    }
 }

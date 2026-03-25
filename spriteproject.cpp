@@ -27,7 +27,7 @@ void SpriteProject::setPixel(int x, int y, Pixel p){
 void SpriteProject::resize(int width, int height){
 
 }
-void replaceAllFramesColor(Pixel oldColor, Pixel newColor){
+void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
 
 }
 void SpriteProject::save(string filename){

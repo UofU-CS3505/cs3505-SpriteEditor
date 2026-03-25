@@ -58,6 +58,7 @@ public:
     void setAlpha(int a);
     /**
      * Checks whether this pixel is equal to another in terms of color.
+     * Opacity is not considered.
      * @brief equals equality checker for pixel color values
      * @param other the other pixel to compare to this one
      * @return whether this pixel has all the same color values
