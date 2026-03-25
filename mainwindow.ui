@@ -6,23 +6,159 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1100</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>bitCat Pixel</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+
+   <widget class="QWidget" name="leftPanel" native="true">
+    <property name="geometry">
+     <rect><x>0</x><y>0</y><width>320</width><height>620</height></rect>
+    </property>
+    <widget class="QPushButton" name="saveButton">
+     <property name="geometry"><rect><x>10</x><y>10</y><width>140</width><height>30</height></rect></property>
+     <property name="text"><string>Save</string></property>
+    </widget>
+    <widget class="QPushButton" name="loadButton">
+     <property name="geometry"><rect><x>160</x><y>10</y><width>140</width><height>30</height></rect></property>
+     <property name="text"><string>Load</string></property>
+    </widget>
+    <widget class="QPushButton" name="exportButton">
+     <property name="geometry"><rect><x>10</x><y>50</y><width>290</width><height>30</height></rect></property>
+     <property name="text"><string>Export</string></property>
+    </widget>
+    <widget class="QToolButton" name="penButton">
+     <property name="geometry"><rect><x>10</x><y>100</y><width>80</width><height>60</height></rect></property>
+     <property name="text"><string>Pen</string></property>
+     <property name="checkable"><bool>true</bool></property>
+     <property name="checked"><bool>true</bool></property>
+    </widget>
+    <widget class="QToolButton" name="brushButton">
+     <property name="geometry"><rect><x>100</x><y>100</y><width>80</width><height>60</height></rect></property>
+     <property name="text"><string>Brush</string></property>
+     <property name="checkable"><bool>true</bool></property>
+    </widget>
+    <widget class="QToolButton" name="eraserButton">
+     <property name="geometry"><rect><x>190</x><y>100</y><width>80</width><height>60</height></rect></property>
+     <property name="text"><string>Eraser</string></property>
+     <property name="checkable"><bool>true</bool></property>
+    </widget>
+    <widget class="QWidget" name="colorPickerWidget" native="true">
+     <property name="geometry"><rect><x>10</x><y>175</y><width>180</width><height>150</height></rect></property>
+     <property name="styleSheet"><string>background-color: white; border: 1px solid gray;</string></property>
+    </widget>
+    <widget class="QLabel" name="sizeLabel">
+     <property name="geometry"><rect><x>200</x><y>175</y><width>40</width><height>20</height></rect></property>
+     <property name="text"><string>Size</string></property>
+    </widget>
+    <widget class="QSlider" name="strokeSlider">
+     <property name="geometry"><rect><x>210</x><y>195</y><width>30</width><height>130</height></rect></property>
+     <property name="minimum"><number>1</number></property>
+     <property name="maximum"><number>40</number></property>
+     <property name="value"><number>4</number></property>
+     <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+    </widget>
+    <widget class="QLabel" name="opacityLabel">
+     <property name="geometry"><rect><x>255</x><y>175</y><width>50</width><height>20</height></rect></property>
+     <property name="text"><string>Opacity</string></property>
+    </widget>
+    <widget class="QSlider" name="opacitySlider">
+     <property name="geometry"><rect><x>265</x><y>195</y><width>30</width><height>130</height></rect></property>
+     <property name="minimum"><number>0</number></property>
+     <property name="maximum"><number>255</number></property>
+     <property name="value"><number>255</number></property>
+     <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+    </widget>
+    <widget class="QPushButton" name="colorButton1">
+     <property name="geometry"><rect><x>10</x><y>335</y><width>30</width><height>30</height></rect></property>
+     <property name="styleSheet"><string>background-color: black;</string></property>
+     <property name="text"><string/></property>
+    </widget>
+    <widget class="QPushButton" name="colorButton2">
+     <property name="geometry"><rect><x>50</x><y>335</y><width>30</width><height>30</height></rect></property>
+     <property name="styleSheet"><string>background-color: red;</string></property>
+     <property name="text"><string/></property>
+    </widget>
+    <widget class="QPushButton" name="colorButton3">
+     <property name="geometry"><rect><x>90</x><y>335</y><width>30</width><height>30</height></rect></property>
+     <property name="styleSheet"><string>background-color: green;</string></property>
+     <property name="text"><string/></property>
+    </widget>
+    <widget class="QPushButton" name="colorButton4">
+     <property name="geometry"><rect><x>130</x><y>335</y><width>30</width><height>30</height></rect></property>
+     <property name="styleSheet"><string>background-color: blue;</string></property>
+     <property name="text"><string/></property>
+    </widget>
+    <widget class="QPushButton" name="colorButtonCustom">
+     <property name="geometry"><rect><x>170</x><y>335</y><width>30</width><height>30</height></rect></property>
+     <property name="text"><string>...</string></property>
+    </widget>
+    <widget class="QPushButton" name="undoButton">
+     <property name="geometry"><rect><x>10</x><y>390</y><width>80</width><height>40</height></rect></property>
+     <property name="text"><string>Undo</string></property>
+    </widget>
+    <widget class="QPushButton" name="redoButton">
+     <property name="geometry"><rect><x>105</x><y>390</y><width>80</width><height>40</height></rect></property>
+     <property name="text"><string>Redo</string></property>
+    </widget>
+    <widget class="QPushButton" name="clearButton">
+     <property name="geometry"><rect><x>200</x><y>390</y><width>80</width><height>40</height></rect></property>
+     <property name="text"><string>Clear</string></property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="canvasWidget" native="true">
+    <property name="geometry">
+     <rect><x>330</x><y>10</y><width>560</width><height>580</height></rect>
+    </property>
+    <property name="styleSheet">
+     <string>background-color: white; border: 1px solid gray;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="framesLabel">
+    <property name="geometry"><rect><x>910</x><y>5</y><width>170</width><height>20</height></rect></property>
+    <property name="text"><string>Frames</string></property>
+    <property name="alignment"><set>Qt::AlignmentFlag::AlignHCenter</set></property>
+   </widget>
+   <widget class="QListWidget" name="frameList">
+    <property name="geometry">
+     <rect><x>910</x><y>30</y><width>170</width><height>490</height></rect>
+    </property>
+    <property name="iconSize">
+     <size><width>150</width><height>100</height></size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="previewFrameButton">
+    <property name="geometry"><rect><x>910</x><y>530</y><width>50</width><height>40</height></rect></property>
+    <property name="font"><font><pointsize>8</pointsize></font></property>
+    <property name="text"><string>Preview</string></property>
+   </widget>
+   <widget class="QPushButton" name="addFrameButton">
+    <property name="geometry"><rect><x>970</x><y>530</y><width>50</width><height>40</height></rect></property>
+    <property name="text"><string>Add</string></property>
+   </widget>
+   <widget class="QPushButton" name="deleteFrameButton">
+    <property name="geometry"><rect><x>1030</x><y>530</y><width>50</width><height>40</height></rect></property>
+    <property name="text"><string>Delete</string></property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>22</height>
-    </rect>
+    <rect><x>0</x><y>0</y><width>1100</width><height>21</height></rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title"><string>File</string></property>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title"><string>Edit</string></property>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
