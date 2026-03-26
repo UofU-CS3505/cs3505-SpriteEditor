@@ -55,6 +55,12 @@ public:
      * @param p The color to set the pixel as
      */
     void setPixel(int x, int y, Pixel p);
+    /**
+     * Erases a pixel in the pixel array
+     * @brief erasePixel Pixel eraser
+     * @param x The X value location of the pixel on the current frame
+     * @param y The Y value location of the pixel on the current frame
+     */
     void erasePixel(int x, int y);
     /**
      * Resizes all frames to a specified size.
@@ -63,6 +69,12 @@ public:
      * @param height the new height of the project
      */
     void resize(int width, int height);
+    /**
+     * TODO
+     * @brief replaceAllFramesColor
+     * @param oldColor
+     * @param newColor
+     */
     void replaceAllFramesColor(Pixel oldColor, Pixel newColor);
     /**
      * Saves the spriteProject as a JSON to a specified file.
