@@ -325,7 +325,7 @@
       <string>New Project</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="replaceColorButton">
      <property name="geometry">
       <rect>
        <x>210</x>

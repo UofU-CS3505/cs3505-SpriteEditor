@@ -1,5 +1,7 @@
 #ifndef SPRITEPROJECT_H
 #define SPRITEPROJECT_H
+
+#include <QObject>
 #include "frame.h"
 #include "pixel.h"
 #include <vector>
@@ -9,17 +11,19 @@ using std::string;
 using std::stack;
 using std::vector;
 
-
-class SpriteProject
+class SpriteProject : public QObject
 {
+    Q_OBJECT
+
 private:
     int width, height, fps, currentFrameIndex;
     vector<Frame> frames;
     Pixel currentColor;
     stack<Frame> undoStack;
     stack<Frame> redoStack;
+
 public:
-    SpriteProject();
+    SpriteProject(int width, int height, int fps, QObject* parent = nullptr);
     /**
      * Adds a new frame after the currentFrameIndex
      * @brief addFrame creates a new frame
@@ -81,6 +85,11 @@ public:
      * @brief redos an action
      */
     void redo();
+
+signals:
+    void frameChanged();      // emit when any pixel on current frame changed
+    void frameListChanged();  // emit when frame added or deleted
+    void projectLoaded();     // emit when load() finished, view should fully rebuild
 };
 
 #endif // SPRITEPROJECT_H

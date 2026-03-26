@@ -1,8 +1,15 @@
 #include "spriteproject.h"
 
-SpriteProject::SpriteProject() {
-
-
+SpriteProject::SpriteProject(int width, int height, int fps, QObject* parent)
+    : QObject(parent)
+    , width(width)
+    , height(height)
+    , fps(fps)
+    , currentFrameIndex(0)
+{
+    Frame f;
+    f.resize(width, height);
+    frames.push_back(f);
 }
 
 void SpriteProject::addFrame(){
