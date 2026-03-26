@@ -3,10 +3,30 @@
 Frame::Frame() {}
 
 void Frame::setPixel(int x, int y, Pixel p){
+    if (x < 0 || y < 0) {
+        return;
+    }
+    if (x >= static_cast<int>(pixels.size())) {
+        return;
+    }
+    if (y >= static_cast<int>(pixels[x].size())) {
+        return;
+    }
+
     pixels[x][y].setRGBA(p.getR(), p.getG(), p.getB(), p.getA());
 }
 
 Pixel Frame::getPixel(int x, int y){
+    if (x < 0 || y < 0) {
+        return Pixel();
+    }
+    if (x >= static_cast<int>(pixels.size())) {
+        return Pixel();
+    }
+    if (y >= static_cast<int>(pixels[x].size())) {
+        return Pixel();
+    }
+
     return pixels[x][y];
 }
 

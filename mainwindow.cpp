@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , currentColor(Qt::black)
     , strokeSize(4)
     , opacity(255)
+    , isMouseDown(false)
 {
     ui->setupUi(this);
 }
@@ -34,38 +35,102 @@ void MainWindow::connectProject()
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
     //TODO: if left button clicked inside the canvas, forward to onMousePressed
+    QMainWindow::mousePressEvent(event);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
     //TODO: if left button is held inside the canvas, forward to onMouseDragged
+    QMainWindow::mouseMoveEvent(event);
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
-    //TODO: stroke for undo here??
+    isMouseDown = false;
+    QMainWindow::mouseReleaseEvent(event);
 }
 
 //-------------mouse handler----------
 void MainWindow::onMousePressed(int x, int y)
 {
-    //TODO
+    isMouseDown = true;
+
+    Pixel brushPixel(
+        currentColor.red(),
+        currentColor.green(),
+        currentColor.blue(),
+        opacity
+        );
+
+    changePixel(x, y, brushPixel);
 }
 
 void MainWindow::onMouseDragged(int x, int y)
 {
-    //TODO
+    if (!isMouseDown) {
+        return;
+    }
+
+    Pixel brushPixel(
+        currentColor.red(),
+        currentColor.green(),
+        currentColor.blue(),
+        opacity
+        );
+
+    changePixel(x, y, brushPixel);
 }
 
 //----------------For coordinates, convert canvas widget pixel to sprite grid pixel
 int MainWindow::toSpriteX(int widgetX)
 {
     //TODO
+    return widgetX;
 }
 
 int MainWindow::toSpriteY(int widgetY)
 {
     //TODO
+    return widgetY;
+}
+
+void MainWindow::changePixel(int x, int y, Pixel p)
+{
+    if (project == nullptr) {
+        return;
+    }
+
+    int size = strokeSize;
+    if (size < 1) {
+        size = 1;
+    }
+
+    int start = -(size / 2);
+    int end = start + size - 1;
+
+    for (int dx = start; dx <= end; dx++) {
+        for (int dy = start; dy <= end; dy++) {
+            project->setPixel(x + dx, y + dy, p);
+        }
+    }
+}
+
+void MainWindow::changeBrushColor(int r, int g, int b)
+{
+    currentColor.setRgb(r, g, b, opacity);
+}
+
+void MainWindow::changeBrushOpacity(int a)
+{
+    if (a < 0) {
+        a = 0;
+    }
+    if (a > 255) {
+        a = 255;
+    }
+
+    opacity = a;
+    currentColor.setAlpha(opacity);
 }
 
 //---------------helpers for connectProject(), connected to modal signals

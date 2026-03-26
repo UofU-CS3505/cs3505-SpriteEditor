@@ -55,6 +55,7 @@ public:
      * @param p The color to set the pixel as
      */
     void setPixel(int x, int y, Pixel p);
+    void erasePixel(int x, int y);
     /**
      * Resizes all frames to a specified size.
      * @brief resize resizes all frames

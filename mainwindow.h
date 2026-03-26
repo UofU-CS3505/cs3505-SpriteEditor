@@ -29,6 +29,8 @@ private:
     int strokeSize;
     // opacity from the opacity slider
     int opacity;
+    // drawing state
+    bool isMouseDown;
 
     // helper method for mouse interactions
     void connectProject(); //connects signal(spriteProject) to slot(mainWindow)
@@ -36,6 +38,11 @@ private:
     void onMouseDragged(int x, int y);
     int toSpriteX(int widgetX);
     int toSpriteY(int widgetY);
+
+    //Pixel Drawing helpers
+    void changePixel(int x, int y, Pixel p);
+    void changeBrushColor(int r, int g, int b);
+    void changeBrushOpacity(int a);
 
 protected:
     // Mouse events, Qt calls these when user interacts with the window
