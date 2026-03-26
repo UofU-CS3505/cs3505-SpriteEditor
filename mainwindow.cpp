@@ -179,7 +179,20 @@ void MainWindow::on_colorButton4_clicked() { currentColor = Qt::blue;  }
 
 void MainWindow::on_colorButtonCustom_clicked()
 {
+    // Open a color dialog initialized with the current color, then update the color.
+    QColor selectColor = QColorDialog::getColor(currentColor, this, "Select the color",
+                                                QColorDialog::ShowAlphaChannel);
+    if(!selectColor.isValid()) { return; }
 
+    changeBrushColor(
+        selectColor.red(),
+        selectColor.green(),
+        selectColor.blue()
+        );
+    changeBrushOpacity(selectColor.alpha());
+
+    // update opacity in time, synchronize Corresponding Values
+    ui->opacitySlider->setValue(opacity);
 }
 
 //--------------slider button slots--------------
