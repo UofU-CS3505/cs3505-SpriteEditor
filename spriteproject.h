@@ -18,19 +18,68 @@ private:
     Pixel currentColor;
     stack<Frame> undoStack;
     stack<Frame> redoStack;
-
 public:
     SpriteProject();
+    /**
+     * Adds a new frame after the currentFrameIndex
+     * @brief addFrame creates a new frame
+     */
     void addFrame();
+    /**
+     * Deletes the frame that is at the currentFrameIndex.
+     * @brief deleteFrame deletes a frame
+     */
     void deleteFrame();
+    /**
+     * Gets the frame at a specified index
+     * @brief getFrame gets a specified frame
+     * @param index the index of the frame you want
+     * @return the frame reference
+     */
     Frame& getFrame(int index);
+    /**
+     * Gets the frame that is at the currentFrameIndex.
+     * @brief getCurrentFrame gets the current frame
+     * @return the current frame reference
+     */
     Frame& getCurrentFrame();
+    /**
+     * Sets a pixel in the pixel array of the current frame to a specified color.
+     * @brief setPixel Pixel setter
+     * @param x The X value location of the pixel on the current frame
+     * @param y The Y value location of the pixel on the current frame
+     * @param p The color to set the pixel as
+     */
     void setPixel(int x, int y, Pixel p);
+    /**
+     * Resizes all frames to a specified size.
+     * @brief resize resizes all frames
+     * @param width the new width of the project
+     * @param height the new height of the project
+     */
     void resize(int width, int height);
     void replaceAllFramesColor(Pixel oldColor, Pixel newColor);
+    /**
+     * Saves the spriteProject as a JSON to a specified file.
+     * @brief save saves the spriteProject
+     * @param filename the file name
+     */
     void save(string filename);
+    /**
+     * Loads the project from a specified file name.
+     * @brief load loads the spriteProject
+     * @param filename the file that contains the spriteProjectJSON
+     */
     void load(string filename);
+    /**
+     * Undos an action such as setPixel.
+     * @brief undo undos an action
+     */
     void undo();
+    /**
+     * Redos an action such as setPixel.
+     * @brief redos an action
+     */
     void redo();
 };
 
