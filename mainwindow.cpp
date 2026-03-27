@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , project(nullptr)
+    , currentTool(ToolMode::Draw)
     , currentColor(Qt::black)
     , strokeSize(4)
     , opacity(255)
@@ -29,6 +30,16 @@ void MainWindow::connectProject()
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshCanvas);
     connect(project, &SpriteProject::frameListChanged,  this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::projectLoaded,    this, &MainWindow::onProjectLoaded);
+}
+
+void MainWindow::setDrawMode()
+{
+    currentTool = ToolMode::Draw;
+}
+
+void MainWindow::setEraseMode()
+{
+    currentTool = ToolMode::Erase;
 }
 
 //----------------mouse event-------------------
@@ -55,6 +66,11 @@ void MainWindow::onMousePressed(int x, int y)
 {
     isMouseDown = true;
 
+    if (currentTool == ToolMode::Erase) {
+        erasePixels(x, y);
+        return;
+    }
+
     Pixel brushPixel(
         currentColor.red(),
         currentColor.green(),
@@ -68,6 +84,11 @@ void MainWindow::onMousePressed(int x, int y)
 void MainWindow::onMouseDragged(int x, int y)
 {
     if (!isMouseDown) {
+        return;
+    }
+
+    if (currentTool == ToolMode::Erase) {
+        erasePixels(x, y);
         return;
     }
 
@@ -111,6 +132,27 @@ void MainWindow::changePixel(int x, int y, Pixel p)
     for (int dx = start; dx <= end; dx++) {
         for (int dy = start; dy <= end; dy++) {
             project->setPixel(x + dx, y + dy, p);
+        }
+    }
+}
+
+void MainWindow::erasePixels(int x, int y)
+{
+    if (project == nullptr) {
+        return;
+    }
+
+    int size = strokeSize;
+    if (size < 1) {
+        size = 1;
+    }
+
+    int start = -(size / 2);
+    int end = start + size - 1;
+
+    for (int dx = start; dx <= end; dx++) {
+        for (int dy = start; dy <= end; dy++) {
+            project->erasePixel(x + dx, y + dy);
         }
     }
 }
@@ -172,10 +214,22 @@ void MainWindow::on_exportButton_clicked()
 }
 
 //-----------color button slots--------------
-void MainWindow::on_colorButton1_clicked() { currentColor = Qt::black; }
-void MainWindow::on_colorButton2_clicked() { currentColor = Qt::red;   }
-void MainWindow::on_colorButton3_clicked() { currentColor = Qt::green; }
-void MainWindow::on_colorButton4_clicked() { currentColor = Qt::blue;  }
+void MainWindow::on_colorButton1_clicked() {
+    changeBrushColor(0, 0, 0);
+    setDrawMode();
+}
+void MainWindow::on_colorButton2_clicked() {
+    changeBrushColor(255, 0, 0);
+    setDrawMode();
+}
+void MainWindow::on_colorButton3_clicked() {
+    changeBrushColor(0, 255, 0);
+    setDrawMode();
+}
+void MainWindow::on_colorButton4_clicked() {
+    changeBrushColor(0, 0, 255);
+    setDrawMode();
+}
 
 void MainWindow::on_colorButtonCustom_clicked()
 {
@@ -197,7 +251,7 @@ void MainWindow::on_colorButtonCustom_clicked()
 
 //--------------slider button slots--------------
 void MainWindow::on_strokeSlider_valueChanged(int value) { strokeSize = value; }
-void MainWindow::on_opacitySlider_valueChanged(int value) { opacity = value; }
+void MainWindow::on_opacitySlider_valueChanged(int value) { changeBrushOpacity(value); }
 
 //--------------canvas actions button slots----
 void MainWindow::on_clearButton_clicked()
@@ -235,4 +289,14 @@ void MainWindow::on_undoButton_clicked()
 void MainWindow::on_redoButton_clicked()
 {
 
+}
+
+void MainWindow::on_eraserButton_clicked()
+{
+    setEraseMode();
+}
+
+void MainWindow::on_penButton_clicked()
+{
+    setDrawMode();
 }

@@ -23,6 +23,17 @@ private:
     Ui::MainWindow *ui;
     SpriteProject* project;
 
+    enum class ToolMode {
+        Draw,
+        Erase
+    };
+
+    ToolMode currentTool;
+
+    void erasePixels(int x, int y);
+    void setDrawMode();
+    void setEraseMode();
+
     // QColor from color picker
     QColor currentColor;
     // stroke size from the stroke slider
@@ -80,6 +91,9 @@ private slots:
 
     void on_undoButton_clicked();
     void on_redoButton_clicked();
+
+    void on_eraserButton_clicked();
+    void on_penButton_clicked();
 
 };
 #endif // MAINWINDOW_H
