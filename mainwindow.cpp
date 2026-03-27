@@ -14,6 +14,17 @@ MainWindow::MainWindow(QWidget *parent)
     , isMouseDown(false)
 {
     ui->setupUi(this);
+
+    QIcon icon1(":/new/prefix/Eraser.png");
+    ui->eraserButton->setIcon(icon1);
+    QIcon icon2(":/new/prefix/Brush.png");
+    ui->brushButton->setIcon(icon2);
+    QIcon icon3(":/new/prefix/Pen.png");
+    ui->penButton->setIcon(icon3);
+
+    ui->penButton->setIconSize(QSize(120, 120));
+    ui->brushButton->setIconSize(QSize(120, 120));
+    ui->eraserButton->setIconSize(QSize(120, 120));
 }
 
 MainWindow::~MainWindow()
@@ -207,7 +218,30 @@ void MainWindow::on_clearButton_clicked()
 
 void MainWindow::on_replaceColorButton_clicked()
 {
+    // if(project == nullptr){
+    //     return;
+    // }
 
+    QColor oldColor;
+    QColor newColor;
+    if(!newColor.isValid()) { return; }
+
+    Pixel oldPixel(
+        oldColor.red(),
+        oldColor.green(),
+        oldColor.blue(),
+        oldColor.alpha()
+        );
+
+    Pixel newPixel(
+        newColor.red(),
+        newColor.green(),
+        newColor.blue(),
+        newColor.alpha()
+        );
+
+    project->replaceAllFramesColor(oldPixel, newPixel);
+    refreshCanvas();
 }
 
 //----------frame manage button slots------------

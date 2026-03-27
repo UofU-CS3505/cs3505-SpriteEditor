@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/new/prefix">
+        <file>Brush.png</file>
+        <file>Eraser.png</file>
+        <file>Pen.png</file>
+    </qresource>
+</RCC>
