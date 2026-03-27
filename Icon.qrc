@@ -9,5 +9,6 @@
         <file>save.png</file>
         <file>new_project.png</file>
         <file>custom_color.png</file>
+        <file>Export.png</file>
     </qresource>
 </RCC>

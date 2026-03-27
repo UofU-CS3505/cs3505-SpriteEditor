@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Set icons for buttons
     QIcon icon1(":/new/prefix/Eraser.png");
     ui->eraserButton->setIcon(icon1);
     QIcon icon2(":/new/prefix/Brush.png");
@@ -39,7 +40,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->colorButtonCustom->setIcon(icon8);
     QIcon icon9(":/new/prefix/new_project.png");
     ui->newProjectButton->setIcon(icon9);
+    QIcon icon10(":/new/prefix/Export.png");
+    ui->exportButton->setIcon(icon10);
 
+    // Set size for buttons
     ui->penButton->setIconSize(QSize(120, 120));
     ui->brushButton->setIconSize(QSize(120, 120));
     ui->eraserButton->setIconSize(QSize(120, 120));
@@ -49,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->saveButton->setIconSize(QSize(20, 20));
     ui->colorButtonCustom->setIconSize(QSize(20, 20));
     ui->newProjectButton->setIconSize(QSize(16, 16));
+    ui->exportButton->setIconSize(QSize(20, 20));
 }
 
 MainWindow::~MainWindow()
@@ -391,13 +396,58 @@ void MainWindow::on_clearButton_clicked()
 
 void MainWindow::on_replaceColorButton_clicked()
 {
-    // if(project == nullptr){
-    //     return;
-    // }
+    // Build a dialog with three input fields
+    QDialog dialog(this);
+    dialog.setWindowTitle("Replace Color");
 
-    QColor oldColor;
-    QColor newColor;
-    if(!newColor.isValid()) { return; }
+    QFormLayout form(&dialog);
+
+    QColor oldColor = currentColor;
+    QColor newColor = currentColor;
+
+    auto colorStyle = [](QColor color){
+        return (
+            "background-color: rgba(" +
+            QString::number(color.red()) + ", " +
+            QString::number(color.green()) + ", " +
+            QString::number(color.blue()) + ", " +
+            QString::number(color.alpha()) + "); "
+            "border: 1px solid black;"
+            );
+    };
+
+    // Create two buttons inside the dialog.
+    // oldColorButton: Color to be replaced. newColorButton: Color after replacement.
+    QPushButton *oldColorButton = new QPushButton(&dialog);
+    QPushButton *newColorButton = new QPushButton(&dialog);
+    oldColorButton->setStyleSheet(colorStyle(oldColor));
+    newColorButton->setStyleSheet(colorStyle(newColor));
+
+    // click each button to choose the color in the canvas and replace the chosen color.
+    connect(oldColorButton, &QPushButton::clicked, [&]() {
+        QColor chosenColor = QColorDialog::getColor(oldColor, &dialog, "Select source color",
+                                              QColorDialog::ShowAlphaChannel);
+        if (!chosenColor.isValid()) return;
+        oldColor = chosenColor;
+        oldColorButton->setStyleSheet(colorStyle(oldColor));
+    });
+
+    connect(newColorButton, &QPushButton::clicked, [&]() {
+        QColor chosenColor = QColorDialog::getColor(newColor, &dialog, "Select target color",
+                                              QColorDialog::ShowAlphaChannel);
+        if (!chosenColor.isValid()) return;
+        newColor = chosenColor;
+        newColorButton->setStyleSheet(colorStyle(newColor));
+    });
+
+    QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    form.addRow("Color to be replaced:", oldColorButton);
+    form.addRow("Color after replacement:", newColorButton);
+    form.addRow(&buttons);
+
+    if (dialog.exec() != QDialog::Accepted) { return; }
 
     Pixel oldPixel(
         oldColor.red(),
