@@ -77,9 +77,17 @@ void SpriteProject::resize(int width, int height){
 }
 
 void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
+    undoStack.push(getCurrentFrame());
+    // clear stack whenever the frame changes
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
+
     for(auto& frame : frames){
         frame.replaceColor(oldColor, newColor);
     }
+
+    emit frameChanged();
 }
 
 void SpriteProject::save(string filename){

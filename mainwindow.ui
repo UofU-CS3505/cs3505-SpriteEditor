@@ -113,19 +113,6 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QWidget" name="colorPickerWidget" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>175</y>
-       <width>180</width>
-       <height>150</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string>background-color: white; border: 1px solid gray;</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="sizeLabel">
      <property name="geometry">
       <rect>
@@ -263,14 +250,14 @@
     <widget class="QPushButton" name="colorButtonCustom">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>335</y>
-       <width>30</width>
-       <height>30</height>
+       <x>10</x>
+       <y>180</y>
+       <width>121</width>
+       <height>61</height>
       </rect>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Custom Colors</string>
      </property>
     </widget>
     <widget class="QPushButton" name="undoButton">
@@ -435,7 +422,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
