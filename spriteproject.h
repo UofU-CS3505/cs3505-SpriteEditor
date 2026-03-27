@@ -102,6 +102,8 @@ public:
      */
     void redo();
 
+    void saveCurrentFrameState();
+
 signals:
     void frameChanged();      // emit when any pixel on current frame changed
     void frameListChanged();  // emit when frame added or deleted

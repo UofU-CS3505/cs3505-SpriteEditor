@@ -129,6 +129,8 @@ void MainWindow::onMousePressed(int x, int y)
 {
     isMouseDown = true;
 
+    project->saveCurrentFrameState();
+
     if (currentTool == ToolMode::Erase) {
         erasePixels(toSpriteX(x), toSpriteY(y));
         return;
@@ -203,7 +205,6 @@ void MainWindow::changePixel(int x, int y, Pixel p)
             project->setPixel(x + dx, y + dy, p);
         }
     }
-    emit project->frameChanged();
 }
 
 void MainWindow::erasePixels(int x, int y)
@@ -486,7 +487,7 @@ void MainWindow::on_previewFrameButton_clicked()
 //-----------undo/redo button slots---------
 void MainWindow::on_undoButton_clicked()
 {
-
+    project->undo();
 }
 
 void MainWindow::on_redoButton_clicked()

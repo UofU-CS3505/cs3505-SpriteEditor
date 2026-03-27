@@ -46,22 +46,22 @@ Frame& SpriteProject::getCurrentFrame(){
 }
 
 void SpriteProject::setPixel(int x, int y, Pixel p){
-    undoStack.push(getCurrentFrame());
-    // clear stack whenever the frame changes
-    while (!redoStack.empty()) {
-        redoStack.pop();
-    }
+    // undoStack.push(getCurrentFrame());
+    // // clear stack whenever the frame changes
+    // while (!redoStack.empty()) {
+    //     redoStack.pop();
+    // }
 
     frames[currentFrameIndex].setPixel(x, y, p);
     emit frameChanged();
 }
 
 void SpriteProject::erasePixel(int x, int y){
-    undoStack.push(getCurrentFrame());
-    // clear stack whenever the frame changes
-    while (!redoStack.empty()) {
-        redoStack.pop();
-    }
+    // undoStack.push(getCurrentFrame());
+    // // clear stack whenever the frame changes
+    // while (!redoStack.empty()) {
+    //     redoStack.pop();
+    // }
 
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
@@ -97,10 +97,14 @@ void SpriteProject::load(string filename){
     //TODO
 }
 
+void SpriteProject::saveCurrentFrameState() {
+    undoStack.push(getCurrentFrame());
+}
+
 void SpriteProject::undo(){
     if (undoStack.empty()) return;
 
-    redoStack.push(getCurrentFrame());
+    //redoStack.push(getCurrentFrame());
     frames[currentFrameIndex] = undoStack.top();
     undoStack.pop();
 
