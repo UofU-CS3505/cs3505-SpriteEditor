@@ -24,6 +24,9 @@ private:
 
 public:
     SpriteProject(int width, int height, int fps, QObject* parent = nullptr);
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
+
     /**
      * Adds a new frame after the currentFrameIndex
      * @brief addFrame creates a new frame

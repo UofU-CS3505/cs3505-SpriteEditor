@@ -326,7 +326,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="canvasWidget" native="true">
+   <widget class="QLabel" name="canvasWidget">
     <property name="geometry">
      <rect>
       <x>330</x>

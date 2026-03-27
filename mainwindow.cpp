@@ -3,6 +3,11 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QDialog>
+#include <QFormLayout>
+#include <QSpinBox>
+#include <QDialogButtonBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -74,13 +79,37 @@ void MainWindow::setEraseMode()
 //----------------mouse event-------------------
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
-    //TODO: if left button clicked inside the canvas, forward to onMousePressed
+    if (event->button() != Qt::LeftButton) {
+        QMainWindow::mousePressEvent(event);
+        return;
+    }
+
+    QPoint globalPos    = event->globalPosition().toPoint();
+    QPoint localPos     = ui->canvasWidget->mapFromGlobal(globalPos);
+    bool   insideCanvas = ui->canvasWidget->rect().contains(localPos);
+
+    if (insideCanvas) {
+        onMousePressed(localPos.x(), localPos.y());
+    }
+
     QMainWindow::mousePressEvent(event);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
-    //TODO: if left button is held inside the canvas, forward to onMouseDragged
+    if (!(event->buttons() & Qt::LeftButton)) {
+        QMainWindow::mouseMoveEvent(event);
+        return;
+    }
+
+    QPoint globalPos    = event->globalPosition().toPoint();
+    QPoint localPos     = ui->canvasWidget->mapFromGlobal(globalPos);
+    bool   insideCanvas = ui->canvasWidget->rect().contains(localPos);
+
+    if (insideCanvas) {
+        onMouseDragged(localPos.x(), localPos.y());
+    }
+
     QMainWindow::mouseMoveEvent(event);
 }
 
@@ -96,7 +125,7 @@ void MainWindow::onMousePressed(int x, int y)
     isMouseDown = true;
 
     if (currentTool == ToolMode::Erase) {
-        erasePixels(x, y);
+        erasePixels(toSpriteX(x), toSpriteY(y));
         return;
     }
 
@@ -107,7 +136,7 @@ void MainWindow::onMousePressed(int x, int y)
         opacity
         );
 
-    changePixel(x, y, brushPixel);
+    changePixel(toSpriteX(x), toSpriteY(y), brushPixel);
 }
 
 void MainWindow::onMouseDragged(int x, int y)
@@ -117,7 +146,7 @@ void MainWindow::onMouseDragged(int x, int y)
     }
 
     if (currentTool == ToolMode::Erase) {
-        erasePixels(x, y);
+        erasePixels(toSpriteX(x), toSpriteY(y));
         return;
     }
 
@@ -128,20 +157,26 @@ void MainWindow::onMouseDragged(int x, int y)
         opacity
         );
 
-    changePixel(x, y, brushPixel);
+    changePixel(toSpriteX(x), toSpriteY(y), brushPixel);
 }
 
 //----------------For coordinates, convert canvas widget pixel to sprite grid pixel
 int MainWindow::toSpriteX(int widgetX)
 {
-    //TODO
-    return widgetX;
+    if (!project) return 0;
+
+    int spriteWeight = project->getWidth();
+    int canvasWeight = ui->canvasWidget->width();
+    return widgetX * spriteWeight / canvasWeight;
 }
 
 int MainWindow::toSpriteY(int widgetY)
 {
-    //TODO
-    return widgetY;
+    if (!project) return 0;
+
+    int spriteHeight = project->getHeight();
+    int canvasHeight = ui->canvasWidget->height();
+    return widgetY * spriteHeight / canvasHeight;
 }
 
 void MainWindow::changePixel(int x, int y, Pixel p)
@@ -163,6 +198,7 @@ void MainWindow::changePixel(int x, int y, Pixel p)
             project->setPixel(x + dx, y + dy, p);
         }
     }
+    emit project->frameChanged();
 }
 
 void MainWindow::erasePixels(int x, int y)
@@ -184,6 +220,7 @@ void MainWindow::erasePixels(int x, int y)
             project->erasePixel(x + dx, y + dy);
         }
     }
+    emit project->frameChanged();
 }
 
 void MainWindow::changeBrushColor(int r, int g, int b)
@@ -205,9 +242,37 @@ void MainWindow::changeBrushOpacity(int a)
 }
 
 //---------------helpers for connectProject(), connected to modal signals
+// Redraws the canvas by painting each sprite pixel as a scaled cell on the QPixmap.
 void MainWindow::refreshCanvas()
 {
-    //TODO: draw all pixels from current frame to the canvas widget
+    if (!project) return;
+
+    // Get sprite and canvas dimensions
+    int spriteWeight = project->getWidth();
+    int spriteHeight = project->getHeight();
+    int canvasWeight = ui->canvasWidget->width();
+    int canvasHeight = ui->canvasWidget->height();
+
+    // Each sprite pixel maps to a cell of this size on the canvas
+    int cellW = canvasWeight / spriteWeight;
+    int cellH = canvasHeight / spriteHeight;
+
+    // Create a blank white pixmap the size of the canvas
+    QPixmap pixmap(canvasWeight, canvasHeight);
+    pixmap.fill(Qt::white);
+    QPainter painter(&pixmap);
+
+    // Draw each sprite pixel as a filled rectangle on the pixmap
+    Frame& frame = project->getCurrentFrame();
+    for (int x = 0; x < spriteWeight; x++) {
+        for (int y = 0; y < spriteHeight; y++) {
+            Pixel p = frame.getPixel(x, y);
+            QColor color(p.getR(), p.getG(), p.getB(), p.getA());
+            painter.fillRect(x * cellW, y * cellH, cellW, cellH, color);
+        }
+    }
+
+    ui->canvasWidget->setPixmap(pixmap);
 }
 
 void MainWindow::refreshFrameList()
@@ -224,7 +289,43 @@ void MainWindow::onProjectLoaded()
 //----------------project manage button slots-------------
 void MainWindow::on_newProjectButton_clicked()
 {
+    // Build a dialog with three input fields
+    QDialog dialog(this);
+    dialog.setWindowTitle("New Project");
 
+    QFormLayout form(&dialog);
+
+    QSpinBox* widthBox = new QSpinBox(&dialog);
+    widthBox->setRange(1, 512);
+    widthBox->setValue(32);
+    form.addRow("Width:", widthBox);
+
+    QSpinBox* heightBox = new QSpinBox(&dialog);
+    heightBox->setRange(1, 512);
+    heightBox->setValue(32);
+    form.addRow("Height:", heightBox);
+
+    QSpinBox* fpsBox = new QSpinBox(&dialog);
+    fpsBox->setRange(1, 60);
+    fpsBox->setValue(8);
+    form.addRow("FPS:", fpsBox);
+
+    QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    form.addRow(&buttons);
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    int width  = widthBox->value();
+    int height = heightBox->value();
+    int fps    = fpsBox->value();
+
+    delete project;
+    project = new SpriteProject(width, height, fps, this);
+    connectProject();
+    refreshCanvas();
+    refreshFrameList();
 }
 
 void MainWindow::on_loadButton_clicked()
