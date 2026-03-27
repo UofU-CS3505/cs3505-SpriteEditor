@@ -46,23 +46,11 @@ Frame& SpriteProject::getCurrentFrame(){
 }
 
 void SpriteProject::setPixel(int x, int y, Pixel p){
-    // undoStack.push(getCurrentFrame());
-    // // clear stack whenever the frame changes
-    // while (!redoStack.empty()) {
-    //     redoStack.pop();
-    // }
-
     frames[currentFrameIndex].setPixel(x, y, p);
     emit frameChanged();
 }
 
 void SpriteProject::erasePixel(int x, int y){
-    // undoStack.push(getCurrentFrame());
-    // // clear stack whenever the frame changes
-    // while (!redoStack.empty()) {
-    //     redoStack.pop();
-    // }
-
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
     emit frameChanged();
@@ -77,12 +65,6 @@ void SpriteProject::resize(int width, int height){
 }
 
 void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
-    undoStack.push(getCurrentFrame());
-    // clear stack whenever the frame changes
-    while (!redoStack.empty()) {
-        redoStack.pop();
-    }
-
     for(auto& frame : frames){
         frame.replaceColor(oldColor, newColor);
     }
@@ -104,7 +86,7 @@ void SpriteProject::saveCurrentFrameState() {
 void SpriteProject::undo(){
     if (undoStack.empty()) return;
 
-    //redoStack.push(getCurrentFrame());
+    redoStack.push(getCurrentFrame());
     frames[currentFrameIndex] = undoStack.top();
     undoStack.pop();
 

@@ -492,7 +492,7 @@ void MainWindow::on_undoButton_clicked()
 
 void MainWindow::on_redoButton_clicked()
 {
-
+    project->redo();
 }
 
 void MainWindow::on_eraserButton_clicked()
