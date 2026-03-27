@@ -79,14 +79,6 @@ void SpriteProject::load(string filename){
     //TODO
 }
 
-void SpriteProject::saveCurrentFrameState() {
-    undoStack.push(getCurrentFrame());
-
-    while (!redoStack.empty()) {
-        redoStack.pop();
-    }
-}
-
 void SpriteProject::undo(){
     if (undoStack.empty()) return;
 
@@ -105,4 +97,16 @@ void SpriteProject::redo(){
     redoStack.pop();
 
     emit frameChanged();
+}
+
+void SpriteProject::saveCurrentFrameState() {
+    undoStack.push(getCurrentFrame());
+
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
+}
+
+int SpriteProject::getCurrentFrameIndex() {
+    return currentFrameIndex;
 }

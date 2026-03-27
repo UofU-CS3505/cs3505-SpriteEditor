@@ -106,6 +106,12 @@ public:
      * @brief saves frame state
      */
     void saveCurrentFrameState();
+    /**
+     * Gets the index of the current frame.
+     * @brief gets the current frame index
+     * @return index number
+     */
+    int getCurrentFrameIndex();
 
 signals:
     void frameChanged();      // emit when any pixel on current frame changed

@@ -290,16 +290,29 @@ void MainWindow::refreshFrameList()
 
     ui->frameList->clear();
 
+
+    int iconSize = 130;
+    ui->frameList->setIconSize(QSize(iconSize, iconSize));
+
     int index = 0;
     while (true) {
         try {
-            Frame& frame = project->getFrame(index);
-
             QListWidgetItem* item = new QListWidgetItem();
-            item->setText("Frame " + QString::number(index + 1));
 
-            QPixmap preview(32, 32);
-            preview.fill(Qt::gray);
+            QPixmap preview(iconSize, iconSize);
+            preview.fill(Qt::transparent);
+            QPainter painter(&preview);
+
+            double scaleX = static_cast<double>(iconSize) / project->getWidth();
+            double scaleY = static_cast<double>(iconSize) / project->getHeight();
+
+            for (int x = 0; x < project->getWidth(); x++) {
+                for (int y = 0; y < project->getHeight(); y++) {
+                    Pixel p = project->getFrame(index).getPixel(x, y);
+                    QColor color(p.getR(), p.getG(), p.getB(), p.getA());
+                    painter.fillRect(x * scaleX, y * scaleY, scaleX, scaleY, color);
+                }
+            }
 
             item->setIcon(QIcon(preview));
             ui->frameList->addItem(item);
@@ -309,7 +322,6 @@ void MainWindow::refreshFrameList()
             break;
         }
     }
-
 }
 
 void MainWindow::onProjectLoaded()
