@@ -8,6 +8,9 @@
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QDialogButtonBox>
+#include <QListWidgetItem>
+#include <QPixmap>
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -283,7 +286,30 @@ void MainWindow::refreshCanvas()
 
 void MainWindow::refreshFrameList()
 {
-    //TODO: rebuild to list inside the side pannel
+    if (!project) return;
+
+    ui->frameList->clear();
+
+    int index = 0;
+    while (true) {
+        try {
+            Frame& frame = project->getFrame(index);
+
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setText("Frame " + QString::number(index + 1));
+
+            QPixmap preview(32, 32);
+            preview.fill(Qt::gray);
+
+            item->setIcon(QIcon(preview));
+            ui->frameList->addItem(item);
+            index++;
+        }
+        catch (std::out_of_range&) {
+            break;
+        }
+    }
+
 }
 
 void MainWindow::onProjectLoaded()
@@ -471,7 +497,7 @@ void MainWindow::on_replaceColorButton_clicked()
 //----------frame manage button slots------------
 void MainWindow::on_addFrameButton_clicked()
 {
-
+    project->addFrame();
 }
 
 void MainWindow::on_deleteFrameButton_clicked()

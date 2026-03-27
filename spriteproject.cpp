@@ -38,11 +38,11 @@ void SpriteProject::deleteFrame(){
 }
 
 Frame& SpriteProject::getFrame(int index){
-    return frames[index];
+    return frames.at(index);
 }
 
 Frame& SpriteProject::getCurrentFrame(){
-    return frames[currentFrameIndex];
+    return frames.at(currentFrameIndex);
 }
 
 void SpriteProject::setPixel(int x, int y, Pixel p){
@@ -81,6 +81,10 @@ void SpriteProject::load(string filename){
 
 void SpriteProject::saveCurrentFrameState() {
     undoStack.push(getCurrentFrame());
+
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
 }
 
 void SpriteProject::undo(){

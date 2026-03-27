@@ -101,7 +101,10 @@ public:
      * @brief redos an action
      */
     void redo();
-
+    /**
+     * Saves the current frame state to push onto the undoStack.
+     * @brief saves frame state
+     */
     void saveCurrentFrameState();
 
 signals:
