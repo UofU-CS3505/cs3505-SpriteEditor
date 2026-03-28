@@ -11,7 +11,6 @@
 #include <QListWidgetItem>
 #include <QPixmap>
 #include <QIcon>
-#include <algorithm>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -75,6 +74,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     project = new SpriteProject(32, 32, 8, this);
 
+    // Set original fps value
+    ui->fpsSpinBox->setValue(project->getFps());
+
     previewTimer = new QTimer(this);
     connect(previewTimer, &QTimer::timeout, this, [this]() {
         int nextIndex = project->getCurrentFrameIndex() + 1;
@@ -104,6 +106,7 @@ void MainWindow::connectProject()
     connect(project, &SpriteProject::frameListChanged,  this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::projectLoaded,    this, &MainWindow::onProjectLoaded);
     connect(ui->frameList, &QListWidget::currentRowChanged, this, &MainWindow::onFrameSelected);
+    connect(ui->fpsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onFpsChanged);
 }
 
 void MainWindow::setDrawMode()
@@ -629,6 +632,15 @@ void MainWindow::on_previewFrameButton_clicked()
         isPreviewing = true;
 
         ui->previewFrameButton->setText("Stop");
+    }
+}
+
+void MainWindow::onFpsChanged(int value) {
+    project->setFps(value);
+
+    if (isPreviewing && previewTimer) {
+        int fps = 1000 / value;
+        previewTimer->setInterval(fps);
     }
 }
 

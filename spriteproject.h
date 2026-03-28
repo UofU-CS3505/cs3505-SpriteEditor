@@ -34,6 +34,8 @@ public:
     SpriteProject(int width, int height, int fps, QObject* parent = nullptr);
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+    // getter and setter for Frames per Second
+    void setFps(int fps) {this->fps = fps; }
     int getFps() const { return fps; }
 
     /**

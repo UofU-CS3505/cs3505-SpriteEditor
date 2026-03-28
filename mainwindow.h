@@ -98,6 +98,7 @@ private slots:
     void on_addFrameButton_clicked();
     void on_deleteFrameButton_clicked();
     void on_previewFrameButton_clicked();
+    void onFpsChanged(int value);
 
     void on_undoButton_clicked();
     void on_redoButton_clicked();
