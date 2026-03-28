@@ -1,4 +1,5 @@
 #include "pixel.h"
+#include <QJsonArray>
 
 Pixel::Pixel() {
     red = 0;
@@ -14,19 +15,19 @@ Pixel::Pixel(int r, int g, int b, int a) {
     alpha = a;
 }
 
-int Pixel::getR(){
+int Pixel::getR() const{
     return red;
 }
 
-int Pixel::getG(){
+int Pixel::getG() const{
     return green;
 }
 
-int Pixel::getB(){
+int Pixel::getB() const{
     return blue;
 }
 
-int Pixel::getA(){
+int Pixel::getA() const{
     return alpha;
 }
 

@@ -410,12 +410,17 @@ void MainWindow::on_newProjectButton_clicked()
 
 void MainWindow::on_loadButton_clicked()
 {
+    QString filePath = QFileDialog::getOpenFileName(nullptr, "Loading File...", "", "*.ssp");
 
+    if(filePath != ""){
+        project->load(filePath);
+    }
 }
 
 void MainWindow::on_saveButton_clicked()
 {
-
+    QString filePath = QFileDialog::getSaveFileName(nullptr, "Saving File...", "", "*.ssp");
+    project->save(filePath);
 }
 
 void MainWindow::on_exportButton_clicked()

@@ -54,3 +54,7 @@ void Frame::resize(int width, int height){
         row.resize(height);
     }
 }
+
+const std::vector<std::vector<Pixel>>& Frame::getPixels() const {
+    return pixels;
+}

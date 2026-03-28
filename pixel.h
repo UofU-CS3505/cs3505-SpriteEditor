@@ -1,5 +1,6 @@
 #ifndef PIXEL_H
 #define PIXEL_H
+#include <QJsonArray>
 
 class Pixel
 {
@@ -25,22 +26,22 @@ public:
      * @brief getR getter for Red variable
      * @return returns the red variable of the Pixel class
      */
-    int getR();
+    int getR() const;
     /**
      * @brief getG getter for Green variable
      * @return returns the Green variable of the Pixel class
      */
-    int getG();
+    int getG() const;
     /**
      * @brief getB getter for Blue variable
      * @return returns the Blue variable of the Pixel class
      */
-    int getB();
+    int getB() const;
     /**
      * @brief getA getter for Alpha variable
      * @return returns the alpha (transparency) variable of the Pixel class
      */
-    int getA();
+    int getA() const;
     /**
      * Sets the values of the pixel.
      * @brief setRGBA complete setter of Pixel class

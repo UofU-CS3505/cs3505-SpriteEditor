@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "pixel.h"
+#include <QJsonArray>
 
 class Frame
 {
@@ -54,6 +55,13 @@ public:
      * @param height the new height of the frame
      */
     void resize(int width, int height);
+
+    /**
+     * Returns a read-only version of the 2D vector of pixels.
+     * @brief getPixels returns unmodifiable pixels
+     * @return 2D vector of pixels
+     */
+    const std::vector<std::vector<Pixel>>& getPixels() const;
 };
 
 #endif // FRAME_H

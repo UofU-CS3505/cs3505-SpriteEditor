@@ -22,6 +22,14 @@ private:
     stack<Frame> undoStack;
     stack<Frame> redoStack;
 
+    QJsonArray pixelToJSON(const Pixel &p) const;
+    Pixel JSONToPixel(QJsonArray& array);
+    QJsonArray frameToJSON(const Frame &frame) const;
+    Frame JSONToFrame(QJsonArray& array);
+
+
+    QJsonObject toJson() const;
+
 public:
     SpriteProject(int width, int height, int fps, QObject* parent = nullptr);
     int getWidth() const { return width; }
@@ -84,13 +92,13 @@ public:
      * @brief save saves the spriteProject
      * @param filename the file name
      */
-    void save(string filename);
+    void save(const QString filename);
     /**
      * Loads the project from a specified file name.
      * @brief load loads the spriteProject
      * @param filename the file that contains the spriteProjectJSON
      */
-    void load(string filename);
+    void load(const QString filename);
     /**
      * Undos an action such as setPixel.
      * @brief undo undos an action
