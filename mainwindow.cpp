@@ -214,15 +214,18 @@ int MainWindow::toSpriteX(int widgetX)
 {
     if (!project) return 0;
 
-    int spriteWeight = project->getWidth();
-    int canvasWeight = ui->canvasWidget->width();
-    int cellW = canvasWeight / spriteWeight;
-    if (cellW <= 0) return 0;
+    int spriteWidth  = project->getWidth();
+    int spriteHeight = project->getHeight();
+    int canvasWidth  = ui->canvasWidget->width();
+    int canvasHeight = ui->canvasWidget->height();
+    int cellSize     = qMin(canvasWidth / spriteWidth, canvasHeight / spriteHeight);
+    if (cellSize <= 0) return 0;
 
-    int spriteX = widgetX / cellW;
+    int offsetX = (canvasWidth - cellSize * spriteWidth) / 2;
+    int spriteX = (widgetX - offsetX) / cellSize;
 
     if (spriteX < 0) spriteX = 0;
-    if (spriteX >= spriteWeight) spriteX = spriteWeight - 1;
+    if (spriteX >= spriteWidth) spriteX = spriteWidth - 1;
 
     return spriteX;
 }
@@ -231,12 +234,15 @@ int MainWindow::toSpriteY(int widgetY)
 {
     if (!project) return 0;
 
+    int spriteWidth  = project->getWidth();
     int spriteHeight = project->getHeight();
+    int canvasWidth  = ui->canvasWidget->width();
     int canvasHeight = ui->canvasWidget->height();
-    int cellH = canvasHeight / spriteHeight;
-    if (cellH <= 0) return 0;
+    int cellSize     = qMin(canvasWidth / spriteWidth, canvasHeight / spriteHeight);
+    if (cellSize <= 0) return 0;
 
-    int spriteY = widgetY / cellH;
+    int offsetY = (canvasHeight - cellSize * spriteHeight) / 2;
+    int spriteY = (widgetY - offsetY) / cellSize;
 
     if (spriteY < 0) spriteY = 0;
     if (spriteY >= spriteHeight) spriteY = spriteHeight - 1;
@@ -311,27 +317,36 @@ void MainWindow::refreshCanvas()
     if (!project) return;
 
     // Get sprite and canvas dimensions
-    int spriteWeight = project->getWidth();
+    int spriteWidth  = project->getWidth();
     int spriteHeight = project->getHeight();
-    int canvasWeight = ui->canvasWidget->width();
+    int canvasWidth  = ui->canvasWidget->width();
     int canvasHeight = ui->canvasWidget->height();
 
-    // Each sprite pixel maps to a cell of this size on the canvas
-    int cellW = canvasWeight / spriteWeight;
-    int cellH = canvasHeight / spriteHeight;
+    // Use a uniform cell size so pixels are always square
+    int cellSize = qMin(canvasWidth / spriteWidth, canvasHeight / spriteHeight);
+    if (cellSize < 1) cellSize = 1;
 
-    // Create a blank white pixmap the size of the canvas
-    QPixmap pixmap(canvasWeight, canvasHeight);
-    pixmap.fill(Qt::white);
+    // Center the drawn sprite within the canvas widget
+    int drawWidth  = cellSize * spriteWidth;
+    int drawHeight = cellSize * spriteHeight;
+    int offsetX    = (canvasWidth  - drawWidth)  / 2;
+    int offsetY    = (canvasHeight - drawHeight) / 2;
+
+    // Grey background for the area outside the sprite boundary
+    QPixmap pixmap(canvasWidth, canvasHeight);
+    pixmap.fill(QColor(180, 180, 180));
     QPainter painter(&pixmap);
 
-    // Draw each sprite pixel as a filled rectangle on the pixmap
+    // White fill inside the sprite canvas
+    painter.fillRect(offsetX, offsetY, drawWidth, drawHeight, Qt::white);
+
+    // Draw each sprite pixel as a filled square cell on the pixmap
     Frame& frame = project->getCurrentFrame();
-    for (int x = 0; x < spriteWeight; x++) {
+    for (int x = 0; x < spriteWidth; x++) {
         for (int y = 0; y < spriteHeight; y++) {
             Pixel p = frame.getPixel(x, y);
             QColor color(p.getR(), p.getG(), p.getB(), p.getA());
-            painter.fillRect(x * cellW, y * cellH, cellW, cellH, color);
+            painter.fillRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize, color);
         }
     }
 
@@ -356,14 +371,18 @@ void MainWindow::refreshFrameList()
             preview.fill(Qt::transparent);
             QPainter painter(&preview);
 
-            double scaleX = static_cast<double>(iconSize) / project->getWidth();
-            double scaleY = static_cast<double>(iconSize) / project->getHeight();
+            int spriteW  = project->getWidth();
+            int spriteH  = project->getHeight();
+            double scale = qMin(static_cast<double>(iconSize) / spriteW,
+                                static_cast<double>(iconSize) / spriteH);
+            int offX = (iconSize - static_cast<int>(scale * spriteW)) / 2;
+            int offY = (iconSize - static_cast<int>(scale * spriteH)) / 2;
 
-            for (int x = 0; x < project->getWidth(); x++) {
-                for (int y = 0; y < project->getHeight(); y++) {
+            for (int x = 0; x < spriteW; x++) {
+                for (int y = 0; y < spriteH; y++) {
                     Pixel p = project->getFrame(index).getPixel(x, y);
                     QColor color(p.getR(), p.getG(), p.getB(), p.getA());
-                    painter.fillRect(x * scaleX, y * scaleY, scaleX, scaleY, color);
+                    painter.fillRect(offX + x * scale, offY + y * scale, scale, scale, color);
                 }
             }
 
