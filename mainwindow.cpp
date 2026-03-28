@@ -250,8 +250,6 @@ void MainWindow::changePixel(int x, int y, Pixel p)
             project->setPixel(x + dx, y + dy, p);
         }
     }
-
-    emit project->frameChanged();
 }
 
 void MainWindow::erasePixels(int x, int y)
@@ -273,7 +271,6 @@ void MainWindow::erasePixels(int x, int y)
             project->erasePixel(x + dx, y + dy);
         }
     }
-    emit project->frameChanged();
 }
 
 void MainWindow::changeBrushColor(int r, int g, int b)
@@ -518,7 +515,7 @@ void MainWindow::on_resizeButton_clicked()
 //--------------canvas actions button slots----
 void MainWindow::on_clearButton_clicked()
 {
-
+    project->clearCurrentFrame();
 }
 
 void MainWindow::on_replaceColorButton_clicked()

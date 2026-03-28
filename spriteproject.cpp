@@ -51,11 +51,13 @@ Frame& SpriteProject::getCurrentFrame(){
 
 void SpriteProject::setPixel(int x, int y, Pixel p){
     frames[currentFrameIndex].setPixel(x, y, p);
+    emit frameChanged();
 }
 
 void SpriteProject::erasePixel(int x, int y){
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
+    emit frameChanged();
 }
 
 void SpriteProject::resize(int width, int height){
@@ -106,6 +108,19 @@ int SpriteProject::getCurrentFrameIndex() {
     return currentFrameIndex;
 }
 
+void SpriteProject::clearCurrentFrame() {
+    saveCurrentFrameState();
+
+    Frame& frame = frames[currentFrameIndex];
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            frame.setPixel(x, y, Pixel(0, 0, 0, 0));
+        }
+    }
+
+    emit frameChanged();
+}
 
 //////////////////////////////// saving/loading
 

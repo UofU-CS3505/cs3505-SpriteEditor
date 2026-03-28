@@ -125,6 +125,11 @@ public:
      * @brief Sets the current frame index
      */
     void setCurrentFrameIndex(int index);
+    /**
+     * Clears the canvas of the selected frame.
+     * @brief clears the current frame
+     */
+    void clearCurrentFrame();
 
 signals:
     void frameChanged();      // emit when any pixel on current frame changed
