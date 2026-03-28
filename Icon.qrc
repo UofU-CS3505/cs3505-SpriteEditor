@@ -10,5 +10,6 @@
         <file>new_project.png</file>
         <file>custom_color.png</file>
         <file>Export.png</file>
+        <file>load_project.png</file>
     </qresource>
 </RCC>
