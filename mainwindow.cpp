@@ -74,6 +74,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->penButton->setChecked(true);
 
     project = new SpriteProject(32, 32, 8, this);
+
+    previewTimer = new QTimer(this);
+    connect(previewTimer, &QTimer::timeout, this, [this]() {
+        int nextIndex = project->getCurrentFrameIndex() + 1;
+        if (nextIndex >= ui->frameList->count()) {
+            nextIndex = 0;
+        }
+        ui->frameList->setCurrentRow(nextIndex);
+    });
+
     connectProject();
     refreshCanvas();
     refreshFrameList();
@@ -608,7 +618,18 @@ void MainWindow::on_deleteFrameButton_clicked()
 
 void MainWindow::on_previewFrameButton_clicked()
 {
+    if (isPreviewing) {
+        previewTimer->stop();
+        isPreviewing = false;
 
+        ui->previewFrameButton->setText("Preview");
+    } else {
+        int fps = 1000 / project->getFps();
+        previewTimer->start(fps);
+        isPreviewing = true;
+
+        ui->previewFrameButton->setText("Stop");
+    }
 }
 
 //-----------undo/redo button slots---------

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QButtonGroup>
+#include <QTimer>
 #include "spriteproject.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +32,9 @@ private:
 
     ToolMode currentTool;
     QButtonGroup* toolGroup;
+
+    QTimer* previewTimer;
+    bool isPreviewing = false;
 
     void erasePixels(int x, int y);
     void setDrawMode();

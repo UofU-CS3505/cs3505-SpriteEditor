@@ -122,6 +122,26 @@ void SpriteProject::clearCurrentFrame() {
     emit frameChanged();
 }
 
+void SpriteProject::setCurrentFrameIndex(int index, bool previewOn) {
+    if (index < 0 || index >= (int)frames.size()) return;
+
+    currentFrameIndex = index;
+
+    // clear undo and redo stack when frame
+    // is changed to avoid unwanted behavior.
+    if (!previewOn) {
+        while (!undoStack.empty()) {
+            undoStack.pop();
+        }
+
+        while (!redoStack.empty()) {
+            redoStack.pop();
+        }
+    }
+
+    emit frameChanged();
+}
+
 //////////////////////////////// saving/loading
 
 void SpriteProject::save(const QString filename){
@@ -179,24 +199,6 @@ void SpriteProject::load(const QString filename){
     }
 
     emit frameListChanged();
-    emit frameChanged();
-}
-
-void SpriteProject::setCurrentFrameIndex(int index) {
-    if (index < 0 || index >= (int)frames.size()) return;
-
-    currentFrameIndex = index;
-
-    // clear undo and redo stack when frame
-    // is changed to avoid unwanted behavior.
-    while (!undoStack.empty()) {
-        undoStack.pop();
-    }
-
-    while (!redoStack.empty()) {
-        redoStack.pop();
-    }
-
     emit frameChanged();
 }
 

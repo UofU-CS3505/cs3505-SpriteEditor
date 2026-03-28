@@ -34,6 +34,7 @@ public:
     SpriteProject(int width, int height, int fps, QObject* parent = nullptr);
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+    int getFps() const { return fps; }
 
     /**
      * Adds a new frame after the currentFrameIndex
@@ -123,8 +124,10 @@ public:
     /**
      * Updated the frame index number to the desired index.
      * @brief Sets the current frame index
+     * @param index
+     * @param previewOn If preview is on, prevents stacks from being messed with
      */
-    void setCurrentFrameIndex(int index);
+    void setCurrentFrameIndex(int index, bool previewOn = false);
     /**
      * Clears the canvas of the selected frame.
      * @brief clears the current frame
