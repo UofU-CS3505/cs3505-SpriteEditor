@@ -604,7 +604,9 @@ void MainWindow::on_addFrameButton_clicked()
 
 void MainWindow::on_deleteFrameButton_clicked()
 {
+    if (ui->frameList->currentRow() < 0) return;
 
+    project->deleteFrame();
 }
 
 void MainWindow::on_previewFrameButton_clicked()
