@@ -11,6 +11,7 @@
 #include <QListWidgetItem>
 #include <QPixmap>
 #include <QIcon>
+#include <algorithm>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -57,6 +58,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->colorButtonCustom->setIconSize(QSize(20, 20));
     ui->newProjectButton->setIconSize(QSize(16, 16));
     ui->exportButton->setIconSize(QSize(20, 20));
+
+    project = new SpriteProject(32, 32, 8, this);
+    connectProject();
+    refreshCanvas();
+    refreshFrameList();
 }
 
 MainWindow::~MainWindow()
@@ -130,6 +136,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 //-------------mouse handler----------
 void MainWindow::onMousePressed(int x, int y)
 {
+    if (project == nullptr) {
+        return;
+    }
+
     isMouseDown = true;
 
     project->saveCurrentFrameState();
@@ -177,7 +187,15 @@ int MainWindow::toSpriteX(int widgetX)
 
     int spriteWeight = project->getWidth();
     int canvasWeight = ui->canvasWidget->width();
-    return widgetX * spriteWeight / canvasWeight;
+    int cellW = canvasWeight / spriteWeight;
+    if (cellW <= 0) return 0;
+
+    int spriteX = widgetX / cellW;
+
+    if (spriteX < 0) spriteX = 0;
+    if (spriteX >= spriteWeight) spriteX = spriteWeight - 1;
+
+    return spriteX;
 }
 
 int MainWindow::toSpriteY(int widgetY)
@@ -186,7 +204,15 @@ int MainWindow::toSpriteY(int widgetY)
 
     int spriteHeight = project->getHeight();
     int canvasHeight = ui->canvasWidget->height();
-    return widgetY * spriteHeight / canvasHeight;
+    int cellH = canvasHeight / spriteHeight;
+    if (cellH <= 0) return 0;
+
+    int spriteY = widgetY / cellH;
+
+    if (spriteY < 0) spriteY = 0;
+    if (spriteY >= spriteHeight) spriteY = spriteHeight - 1;
+
+    return spriteY;
 }
 
 void MainWindow::changePixel(int x, int y, Pixel p)
@@ -208,6 +234,8 @@ void MainWindow::changePixel(int x, int y, Pixel p)
             project->setPixel(x + dx, y + dy, p);
         }
     }
+
+    emit project->frameChanged();
 }
 
 void MainWindow::erasePixels(int x, int y)
