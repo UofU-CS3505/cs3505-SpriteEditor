@@ -84,8 +84,10 @@ void MainWindow::connectProject()
 {
     // model to view
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshCanvas);
+    connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::frameListChanged,  this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::projectLoaded,    this, &MainWindow::onProjectLoaded);
+    connect(ui->frameList, &QListWidget::currentRowChanged, this, &MainWindow::onFrameSelected);
 }
 
 void MainWindow::setDrawMode()
@@ -323,9 +325,8 @@ void MainWindow::refreshCanvas()
 void MainWindow::refreshFrameList()
 {
     if (!project) return;
-
+    ui->frameList->blockSignals(true);
     ui->frameList->clear();
-
 
     int iconSize = 130;
     ui->frameList->setIconSize(QSize(iconSize, iconSize));
@@ -358,6 +359,15 @@ void MainWindow::refreshFrameList()
             break;
         }
     }
+
+    ui->frameList->setCurrentRow(project->getCurrentFrameIndex());
+    ui->frameList->blockSignals(false);
+}
+
+void MainWindow::onFrameSelected(int index) {
+    if (!project || index < 0) return;
+
+    project->setCurrentFrameIndex(index);
 }
 
 void MainWindow::onProjectLoaded()

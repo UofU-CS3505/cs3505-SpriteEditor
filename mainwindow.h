@@ -69,6 +69,9 @@ private slots:
     void refreshFrameList();    // connected to project::frameListChanged
     void onProjectLoaded();     // connected to project::projectLoaded
 
+    // Slot for selecting a specified frame to draw on
+    void onFrameSelected(int index);
+
     // Slots connected to UI buttons
     void on_newProjectButton_clicked();
     void on_loadButton_clicked();

@@ -120,6 +120,11 @@ public:
      * @return index number
      */
     int getCurrentFrameIndex();
+    /**
+     * Updated the frame index number to the desired index.
+     * @brief Sets the current frame index
+     */
+    void setCurrentFrameIndex(int index);
 
 signals:
     void frameChanged();      // emit when any pixel on current frame changed

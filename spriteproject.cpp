@@ -167,6 +167,24 @@ void SpriteProject::load(const QString filename){
     emit frameChanged();
 }
 
+void SpriteProject::setCurrentFrameIndex(int index) {
+    if (index < 0 || index >= (int)frames.size()) return;
+
+    currentFrameIndex = index;
+
+    // clear undo and redo stack when frame
+    // is changed to avoid unwanted behavior.
+    while (!undoStack.empty()) {
+        undoStack.pop();
+    }
+
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
+
+    emit frameChanged();
+}
+
 //////////////////////////////// JSON representations
 
 QJsonArray SpriteProject::pixelToJSON(const Pixel &p) const{
@@ -208,7 +226,6 @@ Frame SpriteProject::JSONToFrame(QJsonArray& array){
 
     return frame;
 }
-
 
 QJsonObject SpriteProject::toJson() const{
     QJsonArray frameArray;
