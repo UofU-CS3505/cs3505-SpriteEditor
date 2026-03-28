@@ -11,5 +11,6 @@
         <file>custom_color.png</file>
         <file>Export.png</file>
         <file>load_project.png</file>
+        <file>resize.png</file>
     </qresource>
 </RCC>

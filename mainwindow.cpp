@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->exportButton->setIcon(icon10);
     QIcon icon11(":/new/prefix/load_project.png");
     ui->loadButton->setIcon(icon11);
+    QIcon icon12(":/new/prefix/resize.png");
+    ui->resizeButton->setIcon(icon12);
 
     // Set size for buttons
     ui->penButton->setIconSize(QSize(120, 120));
@@ -61,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->newProjectButton->setIconSize(QSize(16, 16));
     ui->exportButton->setIconSize(QSize(20, 20));
     ui->loadButton->setIconSize(QSize(20, 20));
+    ui->resizeButton->setIconSize(QSize(20, 20));
 
     // Only one tool can be activated
     toolGroup = new QButtonGroup(this);
