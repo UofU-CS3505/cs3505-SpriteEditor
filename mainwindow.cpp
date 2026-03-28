@@ -59,6 +59,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->newProjectButton->setIconSize(QSize(16, 16));
     ui->exportButton->setIconSize(QSize(20, 20));
 
+    // Only one tool can be activated
+    toolGroup = new QButtonGroup(this);
+    toolGroup->addButton(ui->penButton);
+    toolGroup->addButton(ui->brushButton);
+    toolGroup->addButton(ui->eraserButton);
+    toolGroup->setExclusive(true);
+    ui->penButton->setChecked(true);
+
     project = new SpriteProject(32, 32, 8, this);
     connectProject();
     refreshCanvas();
@@ -455,6 +463,37 @@ void MainWindow::on_colorButtonCustom_clicked()
 void MainWindow::on_strokeSlider_valueChanged(int value) { strokeSize = value; }
 void MainWindow::on_opacitySlider_valueChanged(int value) { changeBrushOpacity(value); }
 
+void MainWindow::on_resizeButton_clicked()
+{
+    if (!project) return;
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Resize Canvas");
+
+    QFormLayout form(&dialog);
+
+    QSpinBox* widthBox = new QSpinBox(&dialog);
+    widthBox->setRange(1, 512);
+    widthBox->setValue(project->getWidth());
+    form.addRow("Width:", widthBox);
+
+    QSpinBox* heightBox = new QSpinBox(&dialog);
+    heightBox->setRange(1, 512);
+    heightBox->setValue(project->getHeight());
+    form.addRow("Height:", heightBox);
+
+    QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    form.addRow(&buttons);
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    project->resize(widthBox->value(), heightBox->value());
+    refreshCanvas();
+    refreshFrameList();
+}
+
 //--------------canvas actions button slots----
 void MainWindow::on_clearButton_clicked()
 {
@@ -567,6 +606,11 @@ void MainWindow::on_eraserButton_clicked()
 }
 
 void MainWindow::on_penButton_clicked()
+{
+    setDrawMode();
+}
+
+void MainWindow::on_brushButton_clicked()
 {
     setDrawMode();
 }

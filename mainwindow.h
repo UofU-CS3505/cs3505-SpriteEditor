@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QButtonGroup>
 #include "spriteproject.h"
 
 QT_BEGIN_NAMESPACE
@@ -29,6 +30,7 @@ private:
     };
 
     ToolMode currentTool;
+    QButtonGroup* toolGroup;
 
     void erasePixels(int x, int y);
     void setDrawMode();
@@ -83,6 +85,7 @@ private slots:
     void on_opacitySlider_valueChanged(int value);
 
     void on_clearButton_clicked();
+    void on_resizeButton_clicked();
     void on_replaceColorButton_clicked();
 
     void on_addFrameButton_clicked();
@@ -94,6 +97,6 @@ private slots:
 
     void on_eraserButton_clicked();
     void on_penButton_clicked();
-
+    void on_brushButton_clicked();
 };
 #endif // MAINWINDOW_H
