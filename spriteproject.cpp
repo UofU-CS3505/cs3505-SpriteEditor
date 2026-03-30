@@ -29,7 +29,7 @@ SpriteProject::SpriteProject(int width, int height, int fps, QObject* parent)
 }
 
 //-----------frame management-----------
-void SpriteProject::addFrame(){
+void SpriteProject::addFrame() {
     Frame newFrame;
     newFrame.resize(width, height);
     int insertFrameIndex = currentFrameIndex + 1;
@@ -41,7 +41,7 @@ void SpriteProject::addFrame(){
     emit frameChanged();
 }
 
-void SpriteProject::deleteFrame(){
+void SpriteProject::deleteFrame() {
     if (frames.size() <= 1) return;
 
     frames.erase(frames.begin() + currentFrameIndex);
@@ -55,37 +55,37 @@ void SpriteProject::deleteFrame(){
 }
 
 //-----------frame access-----------
-Frame& SpriteProject::getFrame(int index){
+Frame& SpriteProject::getFrame(int index) {
     return frames.at(index);
 }
 
-Frame& SpriteProject::getCurrentFrame(){
+Frame& SpriteProject::getCurrentFrame() {
     return frames.at(currentFrameIndex);
 }
 
 //-----------drawing/erasing helpers-----------
-void SpriteProject::setPixel(int x, int y, Pixel p){
+void SpriteProject::setPixel(int x, int y, Pixel p) {
     // Set one pixel in the current frame, then refresh the canvas view
     frames[currentFrameIndex].setPixel(x, y, p);
 }
 
-void SpriteProject::erasePixel(int x, int y){
+void SpriteProject::erasePixel(int x, int y) {
     // Erase one pixel in the current frame by replacing it with transparency
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
 }
 
 //-----------canvas editing-----------
-void SpriteProject::resize(int width, int height){
+void SpriteProject::resize(int width, int height) {
     this->width = width;
     this->height = height;
-    for(auto& frame : frames){
+    for(auto& frame : frames) {
         frame.resize(width, height);
     }
 }
 
-void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
-    for(auto& frame : frames){
+void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor) {
+    for(auto& frame : frames) {
         frame.replaceColor(oldColor, newColor);
     }
 
@@ -93,7 +93,7 @@ void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
 }
 
 //-----------undo/redo-----------
-void SpriteProject::undo(){
+void SpriteProject::undo() {
     if (undoStack.empty()) return;
 
     redoStack.push(getCurrentFrame());
@@ -103,7 +103,7 @@ void SpriteProject::undo(){
     emit frameChanged();
 }
 
-void SpriteProject::redo(){
+void SpriteProject::redo() {
     if (redoStack.empty()) return;
 
     undoStack.push(getCurrentFrame());
@@ -162,7 +162,7 @@ void SpriteProject::setCurrentFrameIndex(int index, bool previewOn) {
 
 //////////////////////////////// saving/loading
 
-void SpriteProject::save(const QString filename){
+void SpriteProject::save(const QString filename) {
     QJsonDocument doc(toJson());
 
     QFile file(filename);
@@ -175,7 +175,7 @@ void SpriteProject::save(const QString filename){
     file.close();
 }
 
-void SpriteProject::load(const QString filename){
+void SpriteProject::load(const QString filename) {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Cannot open file";
@@ -222,15 +222,15 @@ void SpriteProject::load(const QString filename){
 
 //////////////////////////////// JSON representations
 
-QJsonArray SpriteProject::pixelToJSON(const Pixel &p) const{
+QJsonArray SpriteProject::pixelToJSON(const Pixel &p) const {
     return QJsonArray{ p.getR(), p.getG(), p.getB(), p.getA() };
 }
 
-Pixel SpriteProject::JSONToPixel(QJsonArray& array){
+Pixel SpriteProject::JSONToPixel(QJsonArray& array) {
     return Pixel(array[0].toInt(), array[1].toInt(), array[2].toInt(), array[3].toInt());
 }
 
-QJsonArray SpriteProject::SpriteProject::frameToJSON(const Frame &frame) const{
+QJsonArray SpriteProject::SpriteProject::frameToJSON(const Frame &frame) const {
     QJsonArray rows;
 
     for (const auto &row : frame.getPixels()) {
@@ -244,15 +244,15 @@ QJsonArray SpriteProject::SpriteProject::frameToJSON(const Frame &frame) const{
     return rows;
 }
 
-Frame SpriteProject::JSONToFrame(QJsonArray& array){
+Frame SpriteProject::JSONToFrame(QJsonArray& array) {
     Frame frame;
     frame.resize(width, height);
 
-    for(int col = 0; col < width; col++){
+    for(int col = 0; col < width; col++) {
         //gets the 'row' of pixels
         QJsonArray rowArray = array[col].toArray();
 
-        for(int rows = 0; rows < height; rows++){
+        for(int rows = 0; rows < height; rows++) {
             QJsonArray pixel = rowArray[rows].toArray();
 
             frame.setPixel(col, rows, JSONToPixel(pixel));
@@ -262,7 +262,7 @@ Frame SpriteProject::JSONToFrame(QJsonArray& array){
     return frame;
 }
 
-QJsonObject SpriteProject::toJson() const{
+QJsonObject SpriteProject::toJson() const {
     QJsonArray frameArray;
     for (const auto &frame : frames) {
         frameArray.append(frameToJSON(frame));

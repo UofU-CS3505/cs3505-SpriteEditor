@@ -114,15 +114,13 @@ MainWindow::MainWindow(QWidget *parent)
     refreshFrameList();
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
     delete project;
 }
 
 //call everytime when creating a project, connects signals(model) and slots(view)
-void MainWindow::connectProject()
-{
+void MainWindow::connectProject() {
     // model to view
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshCanvas);
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshFrameList);
@@ -133,8 +131,7 @@ void MainWindow::connectProject()
 }
 
 // Switch the current tool to draw mode
-void MainWindow::setDrawMode()
-{
+void MainWindow::setDrawMode() {
     currentTool = ToolMode::Draw;
 }
 
@@ -145,8 +142,7 @@ void MainWindow::setEraseMode()
 }
 
 //----------------mouse event-------------------
-void MainWindow::mousePressEvent(QMouseEvent* event)
-{
+void MainWindow::mousePressEvent(QMouseEvent* event) {
     if (event->button() != Qt::LeftButton) {
         QMainWindow::mousePressEvent(event);
         return;
@@ -163,8 +159,7 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
     QMainWindow::mousePressEvent(event);
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent* event)
-{
+void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     if (!(event->buttons() & Qt::LeftButton)) {
         QMainWindow::mouseMoveEvent(event);
         return;
@@ -182,16 +177,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
 }
 
 // End the current mouse stroke and clear the last tracked canvas position
-void MainWindow::mouseReleaseEvent(QMouseEvent* event)
-{
+void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
     isMouseDown = false;
     hasLastCanvasPos = false;
     QMainWindow::mouseReleaseEvent(event);
 }
 
 //-------------mouse handler----------
-void MainWindow::onMousePressed(int x, int y)
-{
+void MainWindow::onMousePressed(int x, int y) {
     // Ignore drawing input if no project is loaded
     if (project == nullptr) {
         return;
@@ -224,8 +217,7 @@ void MainWindow::onMousePressed(int x, int y)
     changePixel(spriteX, spriteY, brushPixel, true);
 }
 
-void MainWindow::onMouseDragged(int x, int y)
-{
+void MainWindow::onMouseDragged(int x, int y) {
     if (!isMouseDown || project == nullptr) {
         return;
     }
@@ -288,9 +280,8 @@ void MainWindow::onMouseDragged(int x, int y)
     lastCanvasY = y;
 }
 
-//----------------For coordinates, convert canvas widget pixel to sprite grid pixel
-int MainWindow::toSpriteX(int widgetX)
-{
+//----------------For coordinates, convert canvas widget pixel to sprite grid pixel-------------
+int MainWindow::toSpriteX(int widgetX) {
     if (!project) return 0;
 
     int spriteWidth  = project->getWidth();
@@ -313,8 +304,7 @@ int MainWindow::toSpriteX(int widgetX)
     return spriteX;
 }
 
-int MainWindow::toSpriteY(int widgetY)
-{
+int MainWindow::toSpriteY(int widgetY) {
     if (!project) return 0;
 
     int spriteWidth  = project->getWidth();
@@ -337,8 +327,7 @@ int MainWindow::toSpriteY(int widgetY)
     return spriteY;
 }
 
-void MainWindow::changePixel(int x, int y, Pixel p, bool refresh)
-{
+void MainWindow::changePixel(int x, int y, Pixel p, bool refresh) {
     if (project == nullptr) {
         return;
     }
@@ -364,8 +353,7 @@ void MainWindow::changePixel(int x, int y, Pixel p, bool refresh)
     }
 }
 
-void MainWindow::erasePixels(int x, int y, bool refresh)
-{
+void MainWindow::erasePixels(int x, int y, bool refresh) {
     if (project == nullptr) {
         return;
     }
@@ -392,13 +380,11 @@ void MainWindow::erasePixels(int x, int y, bool refresh)
 }
 
 // Update the brush color while keeping the current opacity value
-void MainWindow::changeBrushColor(int r, int g, int b)
-{
+void MainWindow::changeBrushColor(int r, int g, int b) {
     currentColor.setRgb(r, g, b, opacity);
 }
 
-void MainWindow::changeBrushOpacity(int a)
-{
+void MainWindow::changeBrushOpacity(int a) {
     // Clamp opacity to the valid RGBA range
     if (a < 0) {
         a = 0;
@@ -412,10 +398,9 @@ void MainWindow::changeBrushOpacity(int a)
     currentColor.setAlpha(opacity);
 }
 
-//---------------helpers for connectProject(), connected to modal signals
+//---------------helpers for connectProject(), connected to modal signals-----------
 // Redraws the canvas by painting each sprite pixel as a scaled cell on the QPixmap.
-void MainWindow::refreshCanvas()
-{
+void MainWindow::refreshCanvas() {
     if (!project) return;
 
     // Get sprite and canvas dimensions
@@ -455,8 +440,7 @@ void MainWindow::refreshCanvas()
     ui->canvasWidget->setPixmap(pixmap);
 }
 
-void MainWindow::refreshFrameList()
-{
+void MainWindow::refreshFrameList() {
     if (!project) return;
     ui->frameList->blockSignals(true);
     ui->frameList->clear();
@@ -507,15 +491,13 @@ void MainWindow::onFrameSelected(int index) {
     project->setCurrentFrameIndex(index);
 }
 
-void MainWindow::onProjectLoaded()
-{
+void MainWindow::onProjectLoaded() {
     refreshFrameList();
     refreshCanvas();
 }
 
 //----------------project manage button slots-------------
-void MainWindow::on_newProjectButton_clicked()
-{
+void MainWindow::on_newProjectButton_clicked() {
     // Build a dialog with three input fields
     QDialog dialog(this);
     dialog.setWindowTitle("New Project");
@@ -555,8 +537,7 @@ void MainWindow::on_newProjectButton_clicked()
     refreshFrameList();
 }
 
-void MainWindow::on_loadButton_clicked()
-{
+void MainWindow::on_loadButton_clicked() {
     QString filePath = QFileDialog::getOpenFileName(nullptr, "Loading File...", "", "*.ssp");
 
     if(filePath != ""){
@@ -564,14 +545,12 @@ void MainWindow::on_loadButton_clicked()
     }
 }
 
-void MainWindow::on_saveButton_clicked()
-{
+void MainWindow::on_saveButton_clicked() {
     QString filePath = QFileDialog::getSaveFileName(nullptr, "Saving File...", "", "*.ssp");
     project->save(filePath);
 }
 
-void MainWindow::on_exportButton_clicked()
-{
+void MainWindow::on_exportButton_clicked() {
     QString filePath = QFileDialog::getSaveFileName(
         this,
         "Export Sprite Sheet",
@@ -601,8 +580,7 @@ void MainWindow::on_exportButton_clicked()
 }
 
 //-----------color button slots--------------
-void MainWindow::flashColorButton(QPushButton* button, const QString& color)
-{
+void MainWindow::flashColorButton(QPushButton* button, const QString& color) {
     button->setStyleSheet("background-color: " + color + "; border: 3px solid white;");
 
     // After the flash effect persists for this duration, it reverts to its initial state.
@@ -635,8 +613,7 @@ void MainWindow::on_colorButton4_clicked() {
     flashColorButton(ui->colorButton4, "rgb(0, 0, 255)");
 }
 
-void MainWindow::on_colorButtonCustom_clicked()
-{
+void MainWindow::on_colorButtonCustom_clicked() {
     // Open a color dialog initialized with the current color, then update the color.
     QColor selectColor = QColorDialog::getColor(currentColor, this, "Select the color",
                                                 QColorDialog::ShowAlphaChannel);
@@ -657,8 +634,7 @@ void MainWindow::on_colorButtonCustom_clicked()
 void MainWindow::on_strokeSlider_valueChanged(int value) { strokeSize = value; }
 void MainWindow::on_opacitySlider_valueChanged(int value) { changeBrushOpacity(value); }
 
-void MainWindow::on_resizeButton_clicked()
-{
+void MainWindow::on_resizeButton_clicked() {
     if (!project) return;
 
     QDialog dialog(this);
@@ -689,13 +665,11 @@ void MainWindow::on_resizeButton_clicked()
 }
 
 //--------------canvas actions button slots----
-void MainWindow::on_clearButton_clicked()
-{
+void MainWindow::on_clearButton_clicked() {
     project->clearCurrentFrame();
 }
 
-void MainWindow::on_replaceColorButton_clicked()
-{
+void MainWindow::on_replaceColorButton_clicked() {
     // Build a dialog with three input fields
     QDialog dialog(this);
     dialog.setWindowTitle("Replace Color");
@@ -770,20 +744,17 @@ void MainWindow::on_replaceColorButton_clicked()
 }
 
 //----------frame manage button slots------------
-void MainWindow::on_addFrameButton_clicked()
-{
+void MainWindow::on_addFrameButton_clicked() {
     project->addFrame();
 }
 
-void MainWindow::on_deleteFrameButton_clicked()
-{
+void MainWindow::on_deleteFrameButton_clicked() {
     if (ui->frameList->currentRow() < 0) return;
 
     project->deleteFrame();
 }
 
-QPixmap MainWindow::buildFramePixmap(int frameIndex, bool actualSize, QSize targetSize) const
-{
+QPixmap MainWindow::buildFramePixmap(int frameIndex, bool actualSize, QSize targetSize) const {
     if (!project) return QPixmap();
 
     int spriteWidth = project->getWidth();
@@ -836,8 +807,7 @@ QPixmap MainWindow::buildFramePixmap(int frameIndex, bool actualSize, QSize targ
     return pixmap;
 }
 
-void MainWindow::on_previewFrameButton_clicked()
-{
+void MainWindow::on_previewFrameButton_clicked() {
     if (!project) return;
 
     // Setup Dialog window
@@ -963,28 +933,23 @@ void MainWindow::onFpsChanged(int value) {
 }
 
 //-----------undo/redo button slots---------
-void MainWindow::on_undoButton_clicked()
-{
+void MainWindow::on_undoButton_clicked() {
     project->undo();
 }
 
-void MainWindow::on_redoButton_clicked()
-{
+void MainWindow::on_redoButton_clicked() {
     project->redo();
 }
 
 //-----------tool selection button slots-----------
-void MainWindow::on_eraserButton_clicked()
-{
+void MainWindow::on_eraserButton_clicked() {
     setEraseMode();
 }
 
-void MainWindow::on_penButton_clicked()
-{
+void MainWindow::on_penButton_clicked() {
     setDrawMode();
 }
 
-void MainWindow::on_brushButton_clicked()
-{
+void MainWindow::on_brushButton_clicked() {
     setDrawMode();
 }

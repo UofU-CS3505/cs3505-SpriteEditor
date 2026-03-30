@@ -24,23 +24,23 @@ Pixel::Pixel(int r, int g, int b, int a) {
     alpha = a;
 }
 
-int Pixel::getR() const{
+int Pixel::getR() const {
     return red;
 }
 
-int Pixel::getG() const{
+int Pixel::getG() const {
     return green;
 }
 
-int Pixel::getB() const{
+int Pixel::getB() const {
     return blue;
 }
 
-int Pixel::getA() const{
+int Pixel::getA() const {
     return alpha;
 }
 
-void Pixel::setRGBA(int r, int g, int b, int a){
+void Pixel::setRGBA(int r, int g, int b, int a) {
     red = r;
     green = g;
     blue = b;
@@ -48,11 +48,11 @@ void Pixel::setRGBA(int r, int g, int b, int a){
 }
 
 // Update only the transparency value of this pixel
-void Pixel::setAlpha(int a){
+void Pixel::setAlpha(int a) {
     alpha = a;
 }
 
 // Check whether two pixels have the same color values
-bool Pixel::equals(Pixel other){
+bool Pixel::equals(Pixel other) {
     return (other.red == red && other.blue == blue && other.green == green);
 }

@@ -11,7 +11,7 @@
 
 Frame::Frame() {}
 
-void Frame::setPixel(int x, int y, Pixel p){
+void Frame::setPixel(int x, int y, Pixel p) {
     // Ignore invalid coordinates so drawing/erasing stays inside the frame
     if (x < 0 || y < 0) {
         return;
@@ -27,7 +27,7 @@ void Frame::setPixel(int x, int y, Pixel p){
     pixels[x][y].setRGBA(p.getR(), p.getG(), p.getB(), p.getA());
 }
 
-Pixel Frame::getPixel(int x, int y){
+Pixel Frame::getPixel(int x, int y) {
     // Return a default transparent pixel if the coordinates are out of bounds
     if (x < 0 || y < 0) {
         return Pixel();
@@ -42,27 +42,27 @@ Pixel Frame::getPixel(int x, int y){
     return pixels[x][y];
 }
 
-void Frame::clear(){
-    for(auto& row : pixels){
-        for(auto& pixel : row){
+void Frame::clear() {
+    for(auto& row : pixels) {
+        for(auto& pixel : row) {
             pixel.setRGBA(0,0,0,0);
         }
     }
 }
 
-void Frame::replaceColor(Pixel oldColor, Pixel newColor){
-    for(auto& row : pixels){
-        for(auto& pixel : row){
-            if(pixel.equals(oldColor)){
+void Frame::replaceColor(Pixel oldColor, Pixel newColor) {
+    for(auto& row : pixels) {
+        for(auto& pixel : row) {
+            if(pixel.equals(oldColor)) {
                 pixel.setRGBA(newColor.getR(), newColor.getG(), newColor.getB(), pixel.getA());
             }
         }
     }
 }
 
-void Frame::resize(int width, int height){
+void Frame::resize(int width, int height) {
     pixels.resize(width);
-    for(auto& row : pixels){
+    for(auto& row : pixels) {
         row.resize(height);
     }
 }
