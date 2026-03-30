@@ -52,7 +52,8 @@ private:
     bool hasLastCanvasPos;
 
     enum class ToolMode {
-        Draw,
+        Pen,
+        Brush,
         Erase
     };
 
@@ -83,7 +84,8 @@ private:
      * Sets the current tool mode to Draw.
      * @brief setDrawMode activates draw mode
      */
-    void setDrawMode();
+    void setPenMode();
+    void setBrushMode();
 
     /**
      * Sets the current tool mode to Erase.
