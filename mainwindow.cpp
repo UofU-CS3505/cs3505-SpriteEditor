@@ -11,6 +11,11 @@
 #include <QListWidgetItem>
 #include <QPixmap>
 #include <QIcon>
+#include <QLabel>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -78,13 +83,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->fpsSpinBox->setValue(project->getFps());
 
     previewTimer = new QTimer(this);
-    connect(previewTimer, &QTimer::timeout, this, [this]() {
-        int nextIndex = project->getCurrentFrameIndex() + 1;
-        if (nextIndex >= ui->frameList->count()) {
-            nextIndex = 0;
-        }
-        ui->frameList->setCurrentRow(nextIndex);
-    });
 
     connectProject();
     refreshCanvas();
@@ -638,20 +636,175 @@ void MainWindow::on_deleteFrameButton_clicked()
     project->deleteFrame();
 }
 
+QPixmap MainWindow::buildFramePixmap(int frameIndex, bool actualSize, QSize targetSize) const
+{
+    if (!project) return QPixmap();
+
+    int spriteWidth = project->getWidth();
+    int spriteHeight = project->getHeight();
+
+    // Calculate pixmap dimensions
+    int pixWidth, pixHeight, cellSize, offsetX, offsetY;
+    if (actualSize) {
+        // one sprite pixel = one screen pixel
+        pixWidth     = spriteWidth;
+        pixHeight     = spriteHeight;
+        cellSize = 1;
+        offsetX = offsetY = 0;
+    } else {
+        // Scale to fit size and keeping pixels square
+        pixWidth = targetSize.width();
+        pixHeight = targetSize.height();
+        cellSize = qMax(1, qMin(pixWidth / spriteWidth, pixHeight / spriteHeight));
+        offsetX = (pixWidth - cellSize * spriteWidth) / 2;
+        offsetY = (pixHeight - cellSize * spriteHeight) / 2;
+    }
+
+    QPixmap pixmap(pixWidth, pixHeight);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+
+    // Draw the Checkerboard background
+    const int checkerSquareSize = qMax(1, cellSize * 2);
+    for (int squareTop = 0; squareTop < pixHeight; squareTop += checkerSquareSize) {
+        for (int squareLeft = 0; squareLeft < pixWidth; squareLeft += checkerSquareSize) {
+            int col = squareLeft / checkerSquareSize;
+            int row = squareTop  / checkerSquareSize;
+            bool isLightSquare = ((col + row) % 2 == 0);
+            QColor squareColor = isLightSquare ? QColor(200, 200, 200) : Qt::white;
+            painter.fillRect(squareLeft, squareTop, checkerSquareSize, checkerSquareSize, squareColor);
+        }
+    }
+
+    // Draw sprite pixels
+    Frame& frame = const_cast<SpriteProject*>(project)->getFrame(frameIndex);
+    for (int x = 0; x < spriteWidth; x++) {
+        for (int y = 0; y < spriteHeight; y++) {
+            Pixel p = frame.getPixel(x, y);
+            if (p.getA() == 0) continue;
+            QColor color(p.getR(), p.getG(), p.getB(), p.getA());
+            painter.fillRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize, color);
+        }
+    }
+
+    return pixmap;
+}
+
 void MainWindow::on_previewFrameButton_clicked()
 {
-    if (isPreviewing) {
-        previewTimer->stop();
-        isPreviewing = false;
+    if (!project) return;
 
-        ui->previewFrameButton->setText("Preview");
-    } else {
-        int fps = 1000 / project->getFps();
-        previewTimer->start(fps);
-        isPreviewing = true;
+    // Setup Dialog window
+    QDialog* previewDialog = new QDialog(this);
+    previewDialog->setWindowTitle("Animation Preview");
+    previewDialog->setAttribute(Qt::WA_DeleteOnClose);
+    previewDialog->setWindowFlags(previewDialog->windowFlags() | Qt::Window);
 
-        ui->previewFrameButton->setText("Stop");
-    }
+    // Load the canvas
+    QLabel* animationCanvas = new QLabel(previewDialog);
+    animationCanvas->setAlignment(Qt::AlignCenter);
+    animationCanvas->setMinimumSize(256, 256);
+    animationCanvas->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Selectes between scale to fit dialog and actual size
+    QCheckBox* actualSizeToggle = new QCheckBox("Actual Size (1:1 pixels)", previewDialog);
+    actualSizeToggle->setChecked(false);
+
+    // Change FPS in real time
+    QLabel* fpsTextLabel  = new QLabel("FPS:", previewDialog);
+    QSpinBox* fpsSpinBox  = new QSpinBox(previewDialog);
+    fpsSpinBox->setRange(1, 60);
+    fpsSpinBox->setValue(project->getFps());
+
+    // Shows Frame counter so the user knows which frame they are now
+    QLabel* frameCounterLabel = new QLabel("Frame: 1", previewDialog);
+
+    QPushButton* closeButton = new QPushButton("Close", previewDialog);
+
+    // Dialog bottom layout
+    QHBoxLayout* bottomBarLayout = new QHBoxLayout();
+    bottomBarLayout->addWidget(actualSizeToggle);
+    bottomBarLayout->addStretch();
+    bottomBarLayout->addWidget(fpsTextLabel);
+    bottomBarLayout->addWidget(fpsSpinBox);
+    bottomBarLayout->addStretch();
+    bottomBarLayout->addWidget(frameCounterLabel);
+    bottomBarLayout->addStretch();
+    bottomBarLayout->addWidget(closeButton);
+
+    QVBoxLayout* dialogLayout = new QVBoxLayout(previewDialog);
+    dialogLayout->addWidget(animationCanvas);
+    dialogLayout->addLayout(bottomBarLayout);
+
+    // Frame index tracker
+    int* playbackFrameIndex = new int(0);
+
+    // Redraws animationCanvas to show the frame at *playbackFrameIndex
+    auto drawCurrentFrame = [=]() {
+        int totalFrames = ui->frameList->count();
+        if (totalFrames == 0) return;
+
+        // Wrap index in case frames were deleted while the dialog is open
+        *playbackFrameIndex = *playbackFrameIndex % totalFrames;
+
+        bool useActualSize      = actualSizeToggle->isChecked();
+        QSize canvasDisplaySize = animationCanvas->size();
+        QPixmap framePixmap     = buildFramePixmap(*playbackFrameIndex, useActualSize, canvasDisplaySize);
+
+        animationCanvas->setPixmap(framePixmap);
+        frameCounterLabel->setText(QString("Frame: %1 / %2")
+                                       .arg(*playbackFrameIndex + 1)
+                                       .arg(totalFrames));
+    };
+
+    // Playback timer fires once per frame at the current FPS
+    int msPerFrame = 1000 / project->getFps();
+    QTimer* playbackTimer = new QTimer(previewDialog);
+    playbackTimer->setInterval(msPerFrame);
+    playbackTimer->start();
+
+    connect(playbackTimer, &QTimer::timeout, previewDialog, [=]() {
+        int totalFrames = ui->frameList->count();
+        if (totalFrames == 0) return;
+        *playbackFrameIndex = (*playbackFrameIndex + 1) % totalFrames;
+        drawCurrentFrame();
+    });
+
+    // FPS spinbox update timer speed
+    connect(fpsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), previewDialog, [=](int newFps) {
+        playbackTimer->setInterval(1000 / newFps);
+        project->setFps(newFps);
+        ui->fpsSpinBox->setValue(newFps);
+    });
+
+    // Actual size toggle resize the dialog and label then redraw
+    connect(actualSizeToggle, &QCheckBox::toggled, previewDialog, [=](bool) {
+        if (actualSizeToggle->isChecked()) {
+            // Lock label to exact sprite dimensions
+            int spriteWidth  = project->getWidth();
+            int spriteHeight = project->getHeight();
+            animationCanvas->setFixedSize(spriteWidth, spriteHeight);
+            previewDialog->resize(qMax(320, spriteWidth + 40), spriteHeight + 80);
+        } else {
+            // free-resizing behaviour
+            animationCanvas->setMinimumSize(256, 256);
+            animationCanvas->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            previewDialog->resize(320, 360);
+        }
+        drawCurrentFrame();
+    });
+
+    connect(closeButton, &QPushButton::clicked, previewDialog, &QDialog::close);
+
+    drawCurrentFrame();
+
+    previewDialog->resize(320, 360);
+    previewDialog->show();
+
+    // Free the frame index on heap
+    connect(previewDialog, &QDialog::destroyed, previewDialog, [playbackFrameIndex]() {
+        delete playbackFrameIndex;
+    });
 }
 
 void MainWindow::onFpsChanged(int value) {

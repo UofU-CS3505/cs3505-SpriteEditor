@@ -356,5 +356,15 @@ private slots:
      * @brief on_brushButton_clicked handles brush tool button
      */
     void on_brushButton_clicked();
+
+private:
+    /**
+     * Renders one frame of the project into a QPixmap.
+     * @param frameIndex  index of the frame to render
+     * @param actualSize  if true, render at 1:1 pixel scale; otherwise scale to fit targetSize
+     * @param targetSize  the size to scale into when actualSize is false
+     * @return a QPixmap containing the rendered frame
+     */
+    QPixmap buildFramePixmap(int frameIndex, bool actualSize, QSize targetSize) const;
 };
 #endif // MAINWINDOW_H
