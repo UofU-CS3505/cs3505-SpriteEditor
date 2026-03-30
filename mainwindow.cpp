@@ -107,11 +107,13 @@ void MainWindow::connectProject()
     connect(ui->fpsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onFpsChanged);
 }
 
+// Switch the current tool to draw mode
 void MainWindow::setDrawMode()
 {
     currentTool = ToolMode::Draw;
 }
 
+// Switch the current tool to erase mode
 void MainWindow::setEraseMode()
 {
     currentTool = ToolMode::Erase;
@@ -163,6 +165,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 //-------------mouse handler----------
 void MainWindow::onMousePressed(int x, int y)
 {
+    // Ignore drawing input if no project is loaded
     if (project == nullptr) {
         return;
     }
@@ -171,11 +174,13 @@ void MainWindow::onMousePressed(int x, int y)
 
     project->saveCurrentFrameState();
 
+    // Erase if the eraser tool is selected
     if (currentTool == ToolMode::Erase) {
         erasePixels(toSpriteX(x), toSpriteY(y));
         return;
     }
 
+    // Build the brush pixel using the current color and opacity
     Pixel brushPixel(
         currentColor.red(),
         currentColor.green(),
@@ -188,15 +193,18 @@ void MainWindow::onMousePressed(int x, int y)
 
 void MainWindow::onMouseDragged(int x, int y)
 {
+    // Only draw while the left mouse button is being held down
     if (!isMouseDown) {
         return;
     }
 
+    // Erase continuously while dragging in erase mode
     if (currentTool == ToolMode::Erase) {
         erasePixels(toSpriteX(x), toSpriteY(y));
         return;
     }
 
+    // Build the brush pixel using the current color and opacity
     Pixel brushPixel(
         currentColor.red(),
         currentColor.green(),
@@ -216,12 +224,16 @@ int MainWindow::toSpriteX(int widgetX)
     int spriteHeight = project->getHeight();
     int canvasWidth  = ui->canvasWidget->width();
     int canvasHeight = ui->canvasWidget->height();
+
+    // Use the same square cell size as refreshCanvas()
     int cellSize     = qMin(canvasWidth / spriteWidth, canvasHeight / spriteHeight);
     if (cellSize <= 0) return 0;
 
+    // Account for the horizontal offset when the sprite is centered
     int offsetX = (canvasWidth - cellSize * spriteWidth) / 2;
     int spriteX = (widgetX - offsetX) / cellSize;
 
+    // Clamp the result so it always stays inside the sprite bounds
     if (spriteX < 0) spriteX = 0;
     if (spriteX >= spriteWidth) spriteX = spriteWidth - 1;
 
@@ -236,12 +248,16 @@ int MainWindow::toSpriteY(int widgetY)
     int spriteHeight = project->getHeight();
     int canvasWidth  = ui->canvasWidget->width();
     int canvasHeight = ui->canvasWidget->height();
+
+    // Use the same square cell size as refreshCanvas()
     int cellSize     = qMin(canvasWidth / spriteWidth, canvasHeight / spriteHeight);
     if (cellSize <= 0) return 0;
 
+    // Account for the vertical offset when the sprite is centered
     int offsetY = (canvasHeight - cellSize * spriteHeight) / 2;
     int spriteY = (widgetY - offsetY) / cellSize;
 
+    // Clamp the result so it always stays inside the sprite bounds
     if (spriteY < 0) spriteY = 0;
     if (spriteY >= spriteHeight) spriteY = spriteHeight - 1;
 
@@ -259,9 +275,11 @@ void MainWindow::changePixel(int x, int y, Pixel p)
         size = 1;
     }
 
+    // Compute the brush coverage around the center pixel
     int start = -(size / 2);
     int end = start + size - 1;
 
+    // Apply the selected pixel color to every pixel inside the brush area
     for (int dx = start; dx <= end; dx++) {
         for (int dy = start; dy <= end; dy++) {
             project->setPixel(x + dx, y + dy, p);
@@ -280,9 +298,11 @@ void MainWindow::erasePixels(int x, int y)
         size = 1;
     }
 
+    // Compute the brush coverage around the center pixel
     int start = -(size / 2);
     int end = start + size - 1;
 
+    // Erase every pixel inside the brush area
     for (int dx = start; dx <= end; dx++) {
         for (int dy = start; dy <= end; dy++) {
             project->erasePixel(x + dx, y + dy);
@@ -290,6 +310,7 @@ void MainWindow::erasePixels(int x, int y)
     }
 }
 
+// Update the brush color while keeping the current opacity value
 void MainWindow::changeBrushColor(int r, int g, int b)
 {
     currentColor.setRgb(r, g, b, opacity);
@@ -297,6 +318,7 @@ void MainWindow::changeBrushColor(int r, int g, int b)
 
 void MainWindow::changeBrushOpacity(int a)
 {
+    // Clamp opacity to the valid RGBA range
     if (a < 0) {
         a = 0;
     }
@@ -304,6 +326,7 @@ void MainWindow::changeBrushOpacity(int a)
         a = 255;
     }
 
+    // Store the new opacity and keep currentColor synchronized with it
     opacity = a;
     currentColor.setAlpha(opacity);
 }
@@ -827,6 +850,7 @@ void MainWindow::on_redoButton_clicked()
     project->redo();
 }
 
+//-----------tool selection button slots-----------
 void MainWindow::on_eraserButton_clicked()
 {
     setEraseMode();

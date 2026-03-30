@@ -16,6 +16,7 @@ SpriteProject::SpriteProject(int width, int height, int fps, QObject* parent)
     frames.push_back(f);
 }
 
+//-----------frame management-----------
 void SpriteProject::addFrame(){
     Frame newFrame;
     newFrame.resize(width, height);
@@ -41,6 +42,7 @@ void SpriteProject::deleteFrame(){
     emit frameChanged();
 }
 
+//-----------frame access-----------
 Frame& SpriteProject::getFrame(int index){
     return frames.at(index);
 }
@@ -49,17 +51,21 @@ Frame& SpriteProject::getCurrentFrame(){
     return frames.at(currentFrameIndex);
 }
 
+//-----------drawing/erasing helpers-----------
 void SpriteProject::setPixel(int x, int y, Pixel p){
+    // Set one pixel in the current frame, then refresh the canvas view
     frames[currentFrameIndex].setPixel(x, y, p);
     emit frameChanged();
 }
 
 void SpriteProject::erasePixel(int x, int y){
+    // Erase one pixel in the current frame by replacing it with transparency
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
     emit frameChanged();
 }
 
+//-----------canvas editing-----------
 void SpriteProject::resize(int width, int height){
     this->width = width;
     this->height = height;
@@ -76,6 +82,7 @@ void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor){
     emit frameChanged();
 }
 
+//-----------undo/redo-----------
 void SpriteProject::undo(){
     if (undoStack.empty()) return;
 
@@ -96,6 +103,7 @@ void SpriteProject::redo(){
     emit frameChanged();
 }
 
+//-----------frame state-----------
 void SpriteProject::saveCurrentFrameState() {
     undoStack.push(getCurrentFrame());
 

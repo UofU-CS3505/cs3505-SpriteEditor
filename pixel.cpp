@@ -38,10 +38,12 @@ void Pixel::setRGBA(int r, int g, int b, int a){
     alpha = a;
 }
 
+// Update only the transparency value of this pixel
 void Pixel::setAlpha(int a){
     alpha = a;
 }
 
+// Check whether two pixels have the same color values
 bool Pixel::equals(Pixel other){
     return (other.red == red && other.blue == blue && other.green == green);
 }

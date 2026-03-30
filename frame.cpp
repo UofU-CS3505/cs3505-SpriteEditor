@@ -3,6 +3,7 @@
 Frame::Frame() {}
 
 void Frame::setPixel(int x, int y, Pixel p){
+    // Ignore invalid coordinates so drawing/erasing stays inside the frame
     if (x < 0 || y < 0) {
         return;
     }
@@ -13,10 +14,12 @@ void Frame::setPixel(int x, int y, Pixel p){
         return;
     }
 
+    // Update the target pixel with the new RGBA values
     pixels[x][y].setRGBA(p.getR(), p.getG(), p.getB(), p.getA());
 }
 
 Pixel Frame::getPixel(int x, int y){
+    // Return a default transparent pixel if the coordinates are out of bounds
     if (x < 0 || y < 0) {
         return Pixel();
     }
