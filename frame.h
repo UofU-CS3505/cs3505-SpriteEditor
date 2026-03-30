@@ -1,3 +1,13 @@
+/**
+ * Header file for the frame class. The frame class represents a single frame
+ * in a sprite animation. This class provides functionality for setting and
+ * getting pixels withing a frame.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #ifndef FRAME_H
 #define FRAME_H
 

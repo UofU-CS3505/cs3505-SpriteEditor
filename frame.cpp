@@ -1,3 +1,12 @@
+/**
+ * Implementation file for the Frame class. Defines the functionality
+ * for managing a pixel grid.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #include "frame.h"
 
 Frame::Frame() {}

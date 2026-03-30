@@ -1,3 +1,20 @@
+/**
+ * Implementation file for the MainWindow class.
+ *
+ * Key features:
+ * - Canvas drawing using QPainter
+ * - Drawing and erasing in real time
+ * - Frame list preview generation
+ * - Animation preview playback using QTimer
+ * - UI event handling with signal-slot connections
+ * - Loading and saving a project using JSON
+ * - Exporting a project
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QColorDialog>

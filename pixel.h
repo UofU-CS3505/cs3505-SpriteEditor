@@ -1,3 +1,12 @@
+/**
+ * Header file for the pixel class. Represents a single pixel
+ * storing the red, gree, blue, and alpha components.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #ifndef PIXEL_H
 #define PIXEL_H
 #include <QJsonArray>

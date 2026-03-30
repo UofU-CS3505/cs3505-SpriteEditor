@@ -1,3 +1,12 @@
+/**
+ * Implementation file for the Pixel class. Defines the
+ * functionality for creating and changing pixel objects.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #include "pixel.h"
 #include <QJsonArray>
 

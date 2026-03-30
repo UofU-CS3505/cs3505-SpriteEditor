@@ -1,3 +1,12 @@
+/**
+ * Main file that creates an instance of MainWindow and
+ * executes the program.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #include "mainwindow.h"
 
 #include <QApplication>

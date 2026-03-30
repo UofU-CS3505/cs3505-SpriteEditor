@@ -1,3 +1,13 @@
+/**
+ * Implementation file for the SpriteProject class. Implements frame management,
+ * pixel editing, undoing and saving, saving and loading projects, and exporting
+ * projects.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #include "spriteproject.h"
 #include <QDebug>
 #include <QJsonObject>

@@ -1,3 +1,15 @@
+/**
+ * Header file for the SpriteProject class. This class represents the majority of
+ * the model for the sprite editor. Manages Frame objects, editing pixels within
+ * the frames, saving and loading the project using JSON, and controlling animation
+ * preview. Communicates with the UI through signals to notify when any changes are
+ * made and need to be displayed in the UI.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #ifndef SPRITEPROJECT_H
 #define SPRITEPROJECT_H
 

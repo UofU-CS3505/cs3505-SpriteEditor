@@ -1,3 +1,14 @@
+/**
+ * Header file for the MainWindow class. This class deals with user interface, or
+ * the view, of the sprite editor. It manages user interactions, like drawing on
+ * the canvas, managing frames, and controlling the animation preview. It connects
+ * the UI components through signals and slots to the model.
+ *
+ * @authors: Helen Zhang, Aspen Tobler, ...
+ * Class: CS 3505 Assignment 8
+ * Last modified: March 30, 2026
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
