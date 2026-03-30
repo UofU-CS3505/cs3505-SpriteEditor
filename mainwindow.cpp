@@ -533,6 +533,7 @@ void MainWindow::on_newProjectButton_clicked() {
     delete project;
     project = new SpriteProject(width, height, fps, this);
     connectProject();
+    ui->fpsSpinBox->setValue(fps);
     refreshCanvas();
     refreshFrameList();
 }
