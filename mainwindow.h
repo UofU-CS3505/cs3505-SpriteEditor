@@ -15,6 +15,7 @@
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QTimer>
+#include <QPushButton>
 #include "spriteproject.h"
 
 QT_BEGIN_NAMESPACE
@@ -370,6 +371,14 @@ private slots:
      * @brief on_brushButton_clicked handles brush tool button
      */
     void on_brushButton_clicked();
+
+    /**
+     * Temporarily changes the button's color to create a flash effect.
+     * @brief flashButton handles color button flash.
+     * @param button The button to be flashed.
+     * @param color The button's original background color.
+     */
+    void flashColorButton(QPushButton* button, const QString& color);
 
 private:
     /**

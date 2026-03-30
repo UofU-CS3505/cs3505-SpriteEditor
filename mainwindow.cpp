@@ -35,6 +35,7 @@
 #include <QHBoxLayout>
 #include <algorithm>
 #include <cmath>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -573,21 +574,38 @@ void MainWindow::on_exportButton_clicked()
 }
 
 //-----------color button slots--------------
+void MainWindow::flashColorButton(QPushButton* button, const QString& color)
+{
+    button->setStyleSheet("background-color: " + color + "; border: 3px solid white;");
+
+    // After the flash effect persists for this duration, it reverts to its initial state.
+    QTimer::singleShot(150, [button, color]() {
+        button->setStyleSheet("background-color: " + color + ";");
+    });
+}
+
 void MainWindow::on_colorButton1_clicked() {
     changeBrushColor(0, 0, 0);
     setDrawMode();
+    flashColorButton(ui->colorButton1, "rgb(0, 0, 0)");
 }
+
 void MainWindow::on_colorButton2_clicked() {
     changeBrushColor(255, 0, 0);
     setDrawMode();
+    flashColorButton(ui->colorButton2, "rgb(255, 0, 0)");
 }
+
 void MainWindow::on_colorButton3_clicked() {
     changeBrushColor(0, 255, 0);
     setDrawMode();
+    flashColorButton(ui->colorButton3, "rgb(0, 255, 0)");
 }
+
 void MainWindow::on_colorButton4_clicked() {
     changeBrushColor(0, 0, 255);
     setDrawMode();
+    flashColorButton(ui->colorButton4, "rgb(0, 0, 255)");
 }
 
 void MainWindow::on_colorButtonCustom_clicked()
