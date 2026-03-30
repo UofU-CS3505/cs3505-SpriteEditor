@@ -35,6 +35,9 @@ public:
 private:
     Ui::MainWindow *ui;
     SpriteProject* project;
+    int lastCanvasX;
+    int lastCanvasY;
+    bool hasLastCanvasPos;
 
     enum class ToolMode {
         Draw,
@@ -62,7 +65,7 @@ private:
      * @param x sprite X coordinate
      * @param y sprite Y coordinate
      */
-    void erasePixels(int x, int y);
+    void erasePixels(int x, int y, bool refresh = true);
 
     /**
      * Sets the current tool mode to Draw.
@@ -130,7 +133,7 @@ private:
      * @param y sprite Y coordinate of brush center
      * @param p the pixel color to paint
      */
-    void changePixel(int x, int y, Pixel p);
+    void changePixel(int x, int y, Pixel p, bool refresh = true);
 
     /**
      * Updates the current brush color using raw RGB values.

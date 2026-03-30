@@ -16,11 +16,16 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <algorithm>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , project(nullptr)
+    , lastCanvasX(0)
+    , lastCanvasY(0)
+    , hasLastCanvasPos(false)
     , currentTool(ToolMode::Draw)
     , currentColor(Qt::black)
     , strokeSize(4)
@@ -100,7 +105,6 @@ void MainWindow::connectProject()
 {
     // model to view
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshCanvas);
-    connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::frameListChanged,  this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::projectLoaded,    this, &MainWindow::onProjectLoaded);
     connect(ui->frameList, &QListWidget::currentRowChanged, this, &MainWindow::onFrameSelected);
@@ -156,9 +160,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
     QMainWindow::mouseMoveEvent(event);
 }
 
+// End the current mouse stroke and clear the last tracked canvas position
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     isMouseDown = false;
+    hasLastCanvasPos = false;
     QMainWindow::mouseReleaseEvent(event);
 }
 
@@ -171,8 +177,14 @@ void MainWindow::onMousePressed(int x, int y)
     }
 
     isMouseDown = true;
+    hasLastCanvasPos = true;
+    lastCanvasX = x;
+    lastCanvasY = y;
 
     project->saveCurrentFrameState();
+
+    int spriteX = toSpriteX(x);
+    int spriteY = toSpriteY(y);
 
     // Erase if the eraser tool is selected
     if (currentTool == ToolMode::Erase) {
@@ -188,23 +200,33 @@ void MainWindow::onMousePressed(int x, int y)
         opacity
         );
 
-    changePixel(toSpriteX(x), toSpriteY(y), brushPixel);
+    changePixel(spriteX, spriteY, brushPixel, true);
 }
 
 void MainWindow::onMouseDragged(int x, int y)
 {
-    // Only draw while the left mouse button is being held down
-    if (!isMouseDown) {
+    if (!isMouseDown || project == nullptr) {
         return;
     }
 
-    // Erase continuously while dragging in erase mode
-    if (currentTool == ToolMode::Erase) {
-        erasePixels(toSpriteX(x), toSpriteY(y));
+    // If this is the first tracked point, initialize it and wait for the next move
+    if (!hasLastCanvasPos) {
+        lastCanvasX = x;
+        lastCanvasY = y;
+        hasLastCanvasPos = true;
         return;
     }
 
-    // Build the brush pixel using the current color and opacity
+    // Measure how far the mouse moved on the canvas since the last event
+    int dx = x - lastCanvasX;
+    int dy = y - lastCanvasY;
+
+    // between the two mouse positions so fast dragging does not leave gaps
+    int steps = std::max(std::abs(dx), std::abs(dy));
+    if (steps < 1) {
+        steps = 1;
+    }
+
     Pixel brushPixel(
         currentColor.red(),
         currentColor.green(),
@@ -212,7 +234,37 @@ void MainWindow::onMouseDragged(int x, int y)
         opacity
         );
 
-    changePixel(toSpriteX(x), toSpriteY(y), brushPixel);
+    int lastSpriteX = -1;
+    int lastSpriteY = -1;
+
+    for (int i = 1; i <= steps; i++) {
+        double t = static_cast<double>(i) / steps;
+
+        int sampleCanvasX = static_cast<int>(std::lround(lastCanvasX + dx * t));
+        int sampleCanvasY = static_cast<int>(std::lround(lastCanvasY + dy * t));
+
+        int spriteX = toSpriteX(sampleCanvasX);
+        int spriteY = toSpriteY(sampleCanvasY);
+
+        // Skip duplicate sprite cells to avoid unnecessary work while dragging
+        if (spriteX == lastSpriteX && spriteY == lastSpriteY) {
+            continue;
+        }
+
+        if (currentTool == ToolMode::Erase) {
+            erasePixels(spriteX, spriteY, false);
+        } else {
+            changePixel(spriteX, spriteY, brushPixel, false);
+        }
+
+        lastSpriteX = spriteX;
+        lastSpriteY = spriteY;
+    }
+
+    emit project->frameChanged();
+
+    lastCanvasX = x;
+    lastCanvasY = y;
 }
 
 //----------------For coordinates, convert canvas widget pixel to sprite grid pixel
@@ -264,7 +316,7 @@ int MainWindow::toSpriteY(int widgetY)
     return spriteY;
 }
 
-void MainWindow::changePixel(int x, int y, Pixel p)
+void MainWindow::changePixel(int x, int y, Pixel p, bool refresh)
 {
     if (project == nullptr) {
         return;
@@ -285,9 +337,13 @@ void MainWindow::changePixel(int x, int y, Pixel p)
             project->setPixel(x + dx, y + dy, p);
         }
     }
+
+    if (refresh) {
+        emit project->frameChanged();
+    }
 }
 
-void MainWindow::erasePixels(int x, int y)
+void MainWindow::erasePixels(int x, int y, bool refresh)
 {
     if (project == nullptr) {
         return;
@@ -307,6 +363,10 @@ void MainWindow::erasePixels(int x, int y)
         for (int dy = start; dy <= end; dy++) {
             project->erasePixel(x + dx, y + dy);
         }
+    }
+
+    if (refresh) {
+        emit project->frameChanged();
     }
 }
 

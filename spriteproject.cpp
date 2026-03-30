@@ -55,14 +55,12 @@ Frame& SpriteProject::getCurrentFrame(){
 void SpriteProject::setPixel(int x, int y, Pixel p){
     // Set one pixel in the current frame, then refresh the canvas view
     frames[currentFrameIndex].setPixel(x, y, p);
-    emit frameChanged();
 }
 
 void SpriteProject::erasePixel(int x, int y){
     // Erase one pixel in the current frame by replacing it with transparency
     Pixel transparent(0, 0, 0, 0);
     frames[currentFrameIndex].setPixel(x, y, transparent);
-    emit frameChanged();
 }
 
 //-----------canvas editing-----------
