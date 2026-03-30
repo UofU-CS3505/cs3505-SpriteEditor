@@ -105,6 +105,7 @@ void MainWindow::connectProject()
 {
     // model to view
     connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshCanvas);
+    connect(project, &SpriteProject::frameChanged,     this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::frameListChanged,  this, &MainWindow::refreshFrameList);
     connect(project, &SpriteProject::projectLoaded,    this, &MainWindow::onProjectLoaded);
     connect(ui->frameList, &QListWidget::currentRowChanged, this, &MainWindow::onFrameSelected);
