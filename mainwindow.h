@@ -4,7 +4,7 @@
  * the canvas, managing frames, and controlling the animation preview. It connects
  * the UI components through signals and slots to the model.
  *
- * @authors: Helen Zhang, Aspen Tobler, ...
+ * @authors: Helen Zhang, Emily Wang, Aspen Tobler, Xinmiao Li, and Shaoze Yang
  * Class: CS 3505 Assignment 8
  * Last modified: March 30, 2026
  */

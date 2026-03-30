@@ -2,7 +2,7 @@
  * Header file for the pixel class. Represents a single pixel
  * storing the red, gree, blue, and alpha components.
  *
- * @authors: Helen Zhang, Aspen Tobler, ...
+ * @authors: Helen Zhang, Emily Wang, Aspen Tobler, Xinmiao Li, and Shaoze Yang
  * Class: CS 3505 Assignment 8
  * Last modified: March 30, 2026
  */

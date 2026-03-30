@@ -2,7 +2,7 @@
  * Implementation file for the Pixel class. Defines the
  * functionality for creating and changing pixel objects.
  *
- * @authors: Helen Zhang, Aspen Tobler, ...
+ * @authors: Helen Zhang, Emily Wang, Aspen Tobler, Xinmiao Li, and Shaoze Yang
  * Class: CS 3505 Assignment 8
  * Last modified: March 30, 2026
  */

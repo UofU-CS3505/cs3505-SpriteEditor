@@ -10,7 +10,7 @@
  * - Loading and saving a project using JSON
  * - Exporting a project
  *
- * @authors: Helen Zhang, Aspen Tobler, ...
+ * @authors: Helen Zhang, Emily Wang, Aspen Tobler, Xinmiao Li, and Shaoze Yang
  * Class: CS 3505 Assignment 8
  * Last modified: March 30, 2026
  */
