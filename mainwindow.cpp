@@ -570,7 +570,32 @@ void MainWindow::on_saveButton_clicked()
 
 void MainWindow::on_exportButton_clicked()
 {
+    QString filePath = QFileDialog::getSaveFileName(
+        this,
+        "Export Sprite Sheet",
+        "",
+        "PNG Files (*.png)"
+    );
 
+    if (filePath.isEmpty()) return;
+
+    int frameCount = ui->frameList->count();
+    int spriteWidth = project->getWidth();
+    int spriteHeight = project->getHeight();
+
+    QImage spriteSheet(spriteWidth * frameCount, spriteHeight, QImage::Format_ARGB32);
+    spriteSheet.fill(Qt::transparent);
+
+    QPainter painter(&spriteSheet);
+    for (int i = 0; i < frameCount; i++) {
+        QPixmap frame = buildFramePixmap(i, true, QSize());
+        painter.drawPixmap(i * spriteWidth, 0, frame);
+    }
+    painter.end();
+
+    if (!spriteSheet.save(filePath)) {
+        qDebug() << "Failed to save sprite";
+    }
 }
 
 //-----------color button slots--------------

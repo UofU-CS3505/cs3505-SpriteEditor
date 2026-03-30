@@ -243,7 +243,7 @@ private slots:
     void on_saveButton_clicked();
 
     /**
-     * Exports the current project (not yet implemented).
+     * Exports the current project as an image.
      * @brief on_exportButton_clicked handles export button
      */
     void on_exportButton_clicked();
