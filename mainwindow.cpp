@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     , lastCanvasX(0)
     , lastCanvasY(0)
     , hasLastCanvasPos(false)
-    , currentTool(ToolMode::Draw)
+    , currentTool(ToolMode::Pen)
     , currentColor(Qt::black)
     , strokeSize(4)
     , opacity(255)
@@ -131,8 +131,13 @@ void MainWindow::connectProject() {
 }
 
 // Switch the current tool to draw mode
-void MainWindow::setDrawMode() {
-    currentTool = ToolMode::Draw;
+void MainWindow::setPenMode() {
+    currentTool = ToolMode::Pen;
+}
+
+
+void MainWindow::setBrushMode() {
+    currentTool = ToolMode::Brush;
 }
 
 // Switch the current tool to erase mode
@@ -332,7 +337,12 @@ void MainWindow::changePixel(int x, int y, Pixel p, bool refresh) {
         return;
     }
 
-    int size = strokeSize;
+    int size = 1;
+
+    if (currentTool == ToolMode::Brush) {
+        size = strokeSize;
+    }
+
     if (size < 1) {
         size = 1;
     }
@@ -592,25 +602,25 @@ void MainWindow::flashColorButton(QPushButton* button, const QString& color) {
 
 void MainWindow::on_colorButton1_clicked() {
     changeBrushColor(0, 0, 0);
-    setDrawMode();
+    setPenMode();
     flashColorButton(ui->colorButton1, "rgb(0, 0, 0)");
 }
 
 void MainWindow::on_colorButton2_clicked() {
     changeBrushColor(255, 0, 0);
-    setDrawMode();
+    setPenMode();
     flashColorButton(ui->colorButton2, "rgb(255, 0, 0)");
 }
 
 void MainWindow::on_colorButton3_clicked() {
     changeBrushColor(0, 255, 0);
-    setDrawMode();
+    setPenMode();
     flashColorButton(ui->colorButton3, "rgb(0, 255, 0)");
 }
 
 void MainWindow::on_colorButton4_clicked() {
     changeBrushColor(0, 0, 255);
-    setDrawMode();
+    setPenMode();
     flashColorButton(ui->colorButton4, "rgb(0, 0, 255)");
 }
 
@@ -948,9 +958,9 @@ void MainWindow::on_eraserButton_clicked() {
 }
 
 void MainWindow::on_penButton_clicked() {
-    setDrawMode();
+    setPenMode();
 }
 
 void MainWindow::on_brushButton_clicked() {
-    setDrawMode();
+    setBrushMode();
 }
