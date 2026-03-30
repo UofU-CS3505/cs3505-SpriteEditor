@@ -7,6 +7,8 @@
  * @authors: Helen Zhang, Emily Wang, Aspen Tobler, Xinmiao Li, and Shaoze Yang
  * Class: CS 3505 Assignment 8
  * Last modified: March 30, 2026
+ *
+ * Checked by Helen Zhang and Emily Wang
  */
 
 #ifndef MAINWINDOW_H
