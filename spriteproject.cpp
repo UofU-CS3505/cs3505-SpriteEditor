@@ -230,12 +230,12 @@ Frame SpriteProject::JSONToFrame(QJsonArray& array){
     Frame frame;
     frame.resize(width, height);
 
-    for(int rows = 0; rows < height; rows++){
+    for(int col = 0; col < width; col++){
         //gets the 'row' of pixels
-        QJsonArray rowArray = array[rows].toArray();
+        QJsonArray rowArray = array[col].toArray();
 
-        for(int col = 0; col < width; col++){
-            QJsonArray pixel = rowArray[col].toArray();
+        for(int rows = 0; rows < height; rows++){
+            QJsonArray pixel = rowArray[rows].toArray();
 
             frame.setPixel(col, rows, JSONToPixel(pixel));
         }
