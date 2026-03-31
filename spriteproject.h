@@ -35,6 +35,9 @@ private:
     Pixel currentColor;
     stack<Frame> undoStack;
     stack<Frame> redoStack;
+    bool lastActionWasReplace = false;
+    stack<vector<Frame>> undoAllStack;
+    stack<vector<Frame>> redoAllStack;
 
     QJsonArray pixelToJSON(const Pixel &p) const;
     Pixel JSONToPixel(QJsonArray& array);
@@ -131,6 +134,11 @@ public:
      * @brief saves frame state
      */
     void saveCurrentFrameState();
+    /**
+     * Saves all frame states to push onto the undoAllStack.
+     * @brief saves all frame states
+     */
+    void saveAllFramesState();
     /**
      * Gets the index of the current frame.
      * @brief gets the current frame index

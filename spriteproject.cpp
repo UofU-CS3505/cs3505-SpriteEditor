@@ -85,6 +85,7 @@ void SpriteProject::resize(int width, int height) {
 }
 
 void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor) {
+    saveAllFramesState();
     for(auto& frame : frames) {
         frame.replaceColor(oldColor, newColor);
     }
@@ -94,22 +95,37 @@ void SpriteProject::replaceAllFramesColor(Pixel oldColor, Pixel newColor) {
 
 //-----------undo/redo-----------
 void SpriteProject::undo() {
-    if (undoStack.empty()) return;
+    if (lastActionWasReplace) {
+        if (undoAllStack.empty()) return;
 
-    redoStack.push(getCurrentFrame());
-    frames[currentFrameIndex] = undoStack.top();
-    undoStack.pop();
+        redoAllStack.push(frames);
+        frames = undoAllStack.top();
+        undoAllStack.pop();
+        lastActionWasReplace = false;
+    } else {
+        if (undoStack.empty()) return;
+
+        redoStack.push(getCurrentFrame());
+        frames[currentFrameIndex] = undoStack.top();
+        undoStack.pop();
+    }
 
     emit frameChanged();
 }
 
 void SpriteProject::redo() {
-    if (redoStack.empty()) return;
+    if (!redoAllStack.empty()) {
+        undoAllStack.push(frames);
+        frames = redoAllStack.top();
+        redoAllStack.pop();
+        lastActionWasReplace = true;
+    } else {
+        if (redoStack.empty()) return;
 
-    undoStack.push(getCurrentFrame());
-    frames[currentFrameIndex] = redoStack.top();
-    redoStack.pop();
-
+        undoStack.push(getCurrentFrame());
+        frames[currentFrameIndex] = redoStack.top();
+        redoStack.pop();
+    }
     emit frameChanged();
 }
 
@@ -119,6 +135,14 @@ void SpriteProject::saveCurrentFrameState() {
 
     while (!redoStack.empty()) {
         redoStack.pop();
+    }
+}
+
+void SpriteProject::saveAllFramesState() {
+    undoAllStack.push(frames);
+    lastActionWasReplace = true;
+    while (!redoAllStack.empty()){
+        redoAllStack.pop();
     }
 }
 

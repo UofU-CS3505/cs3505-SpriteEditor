@@ -748,8 +748,6 @@ void MainWindow::on_replaceColorButton_clicked() {
         newColor.alpha()
         );
 
-    project->saveCurrentFrameState();
-
     project->replaceAllFramesColor(oldPixel, newPixel);
     refreshCanvas();
 }
